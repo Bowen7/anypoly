@@ -1,21 +1,24 @@
+import { ObjectEditor } from './object-editor'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
+import { useMesh } from '@/lib/db'
 
 export const Editor = () => {
+  const mesh = useMesh()
   return (
-    <Tabs defaultValue="account" className="p-2 h-full flex flex-col">
+    <Tabs defaultValue="object" className="p-2 h-full flex flex-col">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="account">Account</TabsTrigger>
-        <TabsTrigger value="password">Password</TabsTrigger>
+        <TabsTrigger value="object">Object</TabsTrigger>
+        <TabsTrigger value="global">Global</TabsTrigger>
       </TabsList>
-      <TabsContent value="account" className="flex-1">
-        123
+      <TabsContent value="object" className="flex-1">
+        {mesh && <ObjectEditor mesh={mesh} />}
       </TabsContent>
-      <TabsContent value="password">
+      <TabsContent value="global">
         456
       </TabsContent>
     </Tabs>
