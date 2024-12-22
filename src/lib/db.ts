@@ -81,7 +81,7 @@ export const useRemoveMesh = () => {
 export const useMesh = () => {
   const design = useDesign()
   const selected = useAtomValue(selectedAtom)
-  return useMemo(() => {
+  return useMemo<Mesh3D | null>(() => {
     if (!design || !selected) {
       return null
     }
