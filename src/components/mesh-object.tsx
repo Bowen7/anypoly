@@ -22,13 +22,14 @@ const PathMesh = ({ mesh, rotation, isSelected }: PathMeshProps) => {
     const paths = loader.parse(`<path d="${mesh.d}" />`).paths
     const shapes = SVGLoader.createShapes(paths[0])
     return new THREE.ExtrudeGeometry(shapes[0], {
-      steps: mesh.args[0],
-      depth: mesh.args[1],
+      curveSegments: mesh.args[0],
+      steps: mesh.args[1],
+      depth: mesh.args[2],
       bevelEnabled: mesh.bevelEnabled,
-      bevelThickness: mesh.args[2],
-      bevelSize: mesh.args[3],
-      bevelOffset: mesh.args[4],
-      bevelSegments: mesh.args[5],
+      bevelThickness: mesh.args[3],
+      bevelSize: mesh.args[4],
+      bevelOffset: mesh.args[5],
+      bevelSegments: mesh.args[6],
     })
   }, [mesh.d, mesh.args, mesh.bevelEnabled])
 

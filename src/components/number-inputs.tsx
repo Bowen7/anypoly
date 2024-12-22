@@ -2,19 +2,18 @@ import { produce } from 'immer'
 import { Input } from '@/components/ui/input'
 
 type Props = {
-  n?: number
-  value: number[]
-  onChange: (value: number[]) => void
+  values: number[]
+  onChange: (values: number[]) => void
 }
-export const NumberInputs = ({ n = 3, value, onChange }: Props) => {
+export const NumberInputs = ({ values, onChange }: Props) => {
   return (
     <div className="flex flex-row gap-2 flex-wrap">
-      {Array.from({ length: n }).map((_, index) => (
+      {values.map((value, index) => (
         <Input
           type="number"
           key={index}
-          value={value[index]}
-          onChange={e => onChange(produce(value, (draft) => {
+          value={value}
+          onChange={e => onChange(produce(values, (draft) => {
             draft[index] = Number(e.target.value)
           }))}
           className="w-28"

@@ -67,22 +67,22 @@ export const ObjectEditor = ({ mesh }: Props) => {
       <div onKeyDown={onKeyDown}>
         <Label>Position</Label>
         <NumberInputs
-          value={values.position}
-          onChange={value => onChange({ position: value as [number, number, number] })}
+          values={values.position}
+          onChange={values => onChange({ position: values as [number, number, number] })}
         />
       </div>
       <div onKeyDown={onKeyDown}>
         <Label>Rotation (deg)</Label>
         <NumberInputs
-          value={values.rotation}
-          onChange={value => onChange({ rotation: value as [number, number, number] })}
+          values={values.rotation}
+          onChange={values => onChange({ rotation: values as [number, number, number] })}
         />
       </div>
       <div onKeyDown={onKeyDown}>
         <Label>Scale</Label>
         <NumberInputs
-          value={values.scale}
-          onChange={value => onChange({ scale: value as [number, number, number] })}
+          values={values.scale}
+          onChange={values => onChange({ scale: values as [number, number, number] })}
         />
       </div>
       {values.type === 'path' && (
@@ -101,9 +101,8 @@ export const ObjectEditor = ({ mesh }: Props) => {
           <div onKeyDown={onKeyDown}>
             <Label>Args</Label>
             <NumberInputs
-              n={values.args.length}
-              value={values.args}
-              onChange={value => onChange({ args: value as number[] })}
+              values={values.args}
+              onChange={values => onChange({ args: values as number[] })}
             />
           </div>
           <Separator className="mt-2" />
