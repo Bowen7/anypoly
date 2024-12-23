@@ -1,13 +1,14 @@
-import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
-import { useEffect, useRef, useState } from 'react'
-import type { Mesh3D } from '@/lib/types'
-import { Input } from '@/components/ui/input'
-import { useRemoveMesh, useUpdateMesh } from '@/lib/db'
-import { Label } from '@/components/ui/label'
+import type { Mesh3D, PathMesh3D } from '@/lib/types'
 import { NumberInputs } from '@/components/number-inputs'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
+import { useRemoveMesh, useUpdateMesh } from '@/lib/db'
+import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
+import { parsePath, serialize } from 'path-data-parser'
+import { useEffect, useRef, useState } from 'react'
 
 export type Props = {
   mesh: Mesh3D
@@ -19,6 +20,7 @@ const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
 
 export const ObjectEditor = ({ mesh }: Props) => {
   const [values, setValues] = useState(mesh)
+  const [dScale, setDScale] = useState(1)
   const initialValues = useRef(mesh)
   const updateMesh = useUpdateMesh()
   const removeMesh = useRemoveMesh()
@@ -33,6 +35,24 @@ export const ObjectEditor = ({ mesh }: Props) => {
 
   const onChange = (partial: Partial<Mesh3D>) => {
     setValues(prev => ({ ...prev, ...partial } as Mesh3D))
+  }
+
+  const onScaleClick = () => {
+    const segments = parsePath((values as PathMesh3D).d).map(({ key, data }) => {
+      if (key === 'a' || key === 'A') {
+        return {
+          key,
+          data: data.map((d, i) => i === 3 || i === 4 ? d : d * dScale),
+        }
+      }
+      return {
+        key,
+        data: data.map(d => d * dScale),
+      }
+    })
+    const d = serialize(segments)
+    onChange({ d })
+    setDScale(1)
   }
 
   return (
@@ -94,6 +114,15 @@ export const ObjectEditor = ({ mesh }: Props) => {
               onChange({ d: e.target.value })
             }}
           />
+          <div className="mt-2 flex gap-2">
+            <Input
+              type="number"
+              value={dScale}
+              className="max-w-24"
+              onChange={e => setDScale(Number(e.target.value))}
+            />
+            <Button onClick={onScaleClick}>Scale</Button>
+          </div>
         </div>
       )}
       {values.type !== 'group' && (
