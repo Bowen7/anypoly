@@ -3,8 +3,8 @@ import {
   Cube as CubeIcon,
   Cylinder as CylinderIcon,
   DotsThree as DotsThreeIcon,
+  Path as PathIcon,
   RectangleDashed as RectangleDashedIcon,
-  Shapes as ShapesIcon,
   Sphere as SphereIcon,
   Square as SquareIcon,
 } from '@phosphor-icons/react'
@@ -44,7 +44,7 @@ export const FloatBar = () => {
         <SphereIcon />
       </Button>
       <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('path')}>
-        <ShapesIcon />
+        <PathIcon />
       </Button>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

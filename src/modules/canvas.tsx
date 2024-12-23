@@ -1,7 +1,4 @@
 import type { Scene } from 'three'
-import { MeshObject } from '@/components/mesh-object'
-import { Button } from '@/components/ui/button'
-import { useDesign } from '@/lib/db'
 import { DownloadSimple as DownloadSimpleIcon } from '@phosphor-icons/react'
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas as ThreeCanvas } from '@react-three/fiber'
@@ -10,6 +7,10 @@ import { useRef, useState } from 'react'
 import { GLTFExporter } from 'three/addons'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { FloatBar } from './float-bar'
+import { useDesign } from '@/lib/db'
+import { Button } from '@/components/ui/button'
+import { Mesh } from '@/components/mesh'
+import { Outlines } from '@/components/outlines'
 
 type Size = {
   width?: number
@@ -65,17 +66,16 @@ export const Canvas = () => {
         />
         <scene ref={sceneRef}>
           {meshes.map(mesh => (
-            <MeshObject key={mesh.id} mesh={mesh} />
+            <Mesh key={mesh.id} mesh={mesh} />
           ))}
         </scene>
+        <Outlines />
         <Environment preset="sunset" environmentIntensity={0.5} />
         <axesHelper args={[10]} />
         <OrbitControls />
       </ThreeCanvas>
-      <div className="absolute top-4 left-4 shadow-lg px-4 py-1 bg-white rounded-md select-none">
-        {design?.name}
-      </div>
-      <div className="absolute top-4 right-4 shadow-lg px-4 py-1 bg-white rounded-md select-none" onMouseDown={e => e.preventDefault()}>
+      <div className="absolute top-4 right-4 shadow-lg px-2 py-1 bg-white rounded-md select-none flex items-center gap-2" onMouseDown={e => e.preventDefault()}>
+        <span className="text-sm">{design?.name}</span>
         <Button variant="ghost" size="icon" onClick={download} className="w-7 h-7">
           <DownloadSimpleIcon />
         </Button>

@@ -1,4 +1,4 @@
-type BaseMesh3D = {
+export type BaseMesh3D = {
   id: string
   name: string
   position: [number, number, number]
@@ -7,13 +7,13 @@ type BaseMesh3D = {
   visible: boolean
 }
 
-type ShapeMesh3D = BaseMesh3D & {
+export type ShapeMesh3D = BaseMesh3D & {
   color: string
   type: 'box' | 'sphere' | 'circle' | 'cylinder' | 'cone' | 'plane'
   args: number[]
 }
 
-type GroupMesh3D = BaseMesh3D & {
+export type GroupMesh3D = BaseMesh3D & {
   type: 'group'
   children: Mesh3D[]
 }

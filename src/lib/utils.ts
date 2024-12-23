@@ -109,7 +109,7 @@ export const createMesh = (type: Mesh3D['type']): Mesh3D => {
       return {
         ...mesh,
         type,
-        d: 'M0 200 v-200 h200 a100,100 90 0,1 0,200 a100,100 90 0,1 -200,0z',
+        d: 'M 0 2 v -2 h 2 a 1 1 0.9 0 1 0 2 a 1 1 0.9 0 1 -2 0 z',
         extrude: false,
         bevelEnabled: false,
         args: [12, 2, 5, 1, 1, 0, 1],

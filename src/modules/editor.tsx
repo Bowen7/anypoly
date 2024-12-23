@@ -1,4 +1,4 @@
-import { ObjectEditor } from './object-editor'
+import { MeshEditor } from './mesh-editor'
 import {
   Tabs,
   TabsContent,
@@ -16,7 +16,7 @@ export const Editor = () => {
         <TabsTrigger value="global">Global</TabsTrigger>
       </TabsList>
       <TabsContent value="object" className="flex-1">
-        {mesh && <ObjectEditor mesh={mesh} key={mesh.id} />}
+        {mesh && <MeshEditor mesh={mesh} key={mesh.id} />}
       </TabsContent>
       <TabsContent value="global">
         456

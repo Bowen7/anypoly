@@ -1,3 +1,6 @@
+import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
+import { parsePath, serialize } from 'path-data-parser'
+import { useEffect, useRef, useState } from 'react'
 import type { Mesh3D, PathMesh3D } from '@/lib/types'
 import { NumberInputs } from '@/components/number-inputs'
 import { Button } from '@/components/ui/button'
@@ -6,9 +9,6 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useRemoveMesh, useUpdateMesh } from '@/lib/db'
-import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
-import { parsePath, serialize } from 'path-data-parser'
-import { useEffect, useRef, useState } from 'react'
 
 export type Props = {
   mesh: Mesh3D
@@ -18,7 +18,7 @@ const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
   e.stopPropagation()
 }
 
-export const ObjectEditor = ({ mesh }: Props) => {
+export const MeshEditor = ({ mesh }: Props) => {
   const [values, setValues] = useState(mesh)
   const [dScale, setDScale] = useState(1)
   const initialValues = useRef(mesh)
