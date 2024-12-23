@@ -62,7 +62,9 @@ export const NodeTree = ({ data, height }: Props) => {
       } else {
         visitMesh(draft, parentId, (collection, i) => {
           const group = collection[i]
-          group.children?.splice(index, 0, mesh!)
+          if (group.type === 'group') {
+            group.children.splice(index, 0, mesh!)
+          }
         })
       }
       visitMesh(draft, tempGroup.id, (collection, index) => {

@@ -1,6 +1,6 @@
 import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
 import { parsePath, serialize } from 'path-data-parser'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Mesh3D, PathMesh3D } from '@/lib/types'
 import { NumberInputs } from '@/components/number-inputs'
 import { Button } from '@/components/ui/button'
@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useRemoveMesh, useUpdateMesh } from '@/lib/db'
+import { Checkbox } from '@/components/ui/checkbox'
 
 export type Props = {
   mesh: Mesh3D
@@ -55,8 +56,23 @@ export const MeshEditor = ({ mesh }: Props) => {
     setDScale(1)
   }
 
+  const argsN = useMemo(() => {
+    if (values.type === 'group') {
+      return 0
+    }
+    if (values.type === 'path') {
+      if (!values.extrude) {
+        return 1
+      }
+      if (!values.bevelEnabled) {
+        return 3
+      }
+    }
+    return values.args.length
+  }, [values])
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
       <div className="flex flex-row gap-2">
         <Button
           variant="ghost"
@@ -73,7 +89,7 @@ export const MeshEditor = ({ mesh }: Props) => {
           <TrashIcon />
         </Button>
       </div>
-      <div onKeyDown={onKeyDown}>
+      <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
         <Label>Mesh Name</Label>
         <Input
           placeholder="Input your mesh name"
@@ -84,21 +100,21 @@ export const MeshEditor = ({ mesh }: Props) => {
           className="w-48"
         />
       </div>
-      <div onKeyDown={onKeyDown}>
+      <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
         <Label>Position</Label>
         <NumberInputs
           values={values.position}
           onChange={values => onChange({ position: values as [number, number, number] })}
         />
       </div>
-      <div onKeyDown={onKeyDown}>
+      <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
         <Label>Rotation (deg)</Label>
         <NumberInputs
           values={values.rotation}
           onChange={values => onChange({ rotation: values as [number, number, number] })}
         />
       </div>
-      <div onKeyDown={onKeyDown}>
+      <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
         <Label>Scale</Label>
         <NumberInputs
           values={values.scale}
@@ -106,7 +122,7 @@ export const MeshEditor = ({ mesh }: Props) => {
         />
       </div>
       {values.type === 'path' && (
-        <div onKeyDown={onKeyDown}>
+        <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
           <Label>D</Label>
           <Textarea
             value={values.d}
@@ -127,15 +143,48 @@ export const MeshEditor = ({ mesh }: Props) => {
       )}
       {values.type !== 'group' && (
         <>
-          <div onKeyDown={onKeyDown}>
-            <Label>Args</Label>
+          <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
+            <Label className="flex flex-row gap-2 items-center justify-between">
+              Args
+            </Label>
+            {values.type === 'path' && (
+              <div className="flex flex-row gap-2 items-center mb-1">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="extrude"
+                    checked={values.extrude}
+                    onCheckedChange={checked => onChange({ extrude: checked as boolean })}
+                  />
+                  <label
+                    htmlFor="extrude"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Extrude
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="bevelEnabled"
+                    checked={values.bevelEnabled}
+                    onCheckedChange={checked => onChange({ bevelEnabled: checked as boolean })}
+                  />
+                  <label
+                    htmlFor="bevelEnabled"
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    Bevel Enabled
+                  </label>
+                </div>
+              </div>
+            )}
             <NumberInputs
               values={values.args}
+              n={argsN}
               onChange={values => onChange({ args: values as number[] })}
             />
           </div>
           <Separator className="mt-2" />
-          <div onKeyDown={onKeyDown}>
+          <div className="flex flex-col gap-2" onKeyDown={onKeyDown}>
             <Label>Material Color</Label>
             <div className="flex flex-row gap-2 items-center">
               <span className="w-2 h-2 rounded-full" style={{ background: values.color }}></span>
