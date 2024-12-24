@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { useRemoveMesh, useUpdateMesh } from '@/lib/db'
+import { useRemoveMesh, useUpdateMesh } from '@/lib'
 import { Checkbox } from '@/components/ui/checkbox'
 
 export type Props = {

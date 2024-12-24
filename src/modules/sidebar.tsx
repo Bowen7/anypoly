@@ -1,16 +1,15 @@
-import { useMemo, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { Separator } from '@/components/ui/separator'
 import { MeshTree } from '@/components/mesh-tree'
 import {
   Menubar,
   MenubarContent,
-  MenubarItem,
   MenubarMenu,
   MenubarTrigger,
 } from '@/components/ui/menubar'
-import { NameDialog } from '@/components/name-dialog'
-import { useDesign } from '@/lib/db'
+import { useMeshes } from '@/lib'
+import { LogoMenu } from '@/components/logo-menu'
 
 type Size = {
   width?: number
@@ -18,17 +17,12 @@ type Size = {
 }
 
 export const Sidebar = () => {
-  const [isNewDialogOpen, setIsNewDialogOpen] = useState(false)
-  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false)
+  const meshes = useMeshes()
   const ref = useRef<HTMLDivElement>(null)
   const [{ height, width }, setSize] = useState<Size>({
     width: 0,
     height: 0,
   })
-  const design = useDesign()
-  const treeData = useMemo(() => {
-    return design?.meshes || []
-  }, [design])
 
   const onResize = useDebounceCallback(setSize, 200)
 
@@ -39,18 +33,18 @@ export const Sidebar = () => {
 
   return (
     <div className="h-full flex flex-col">
+      <LogoMenu />
       <div className="p-2 flex flex-col gap-2">
         <Menubar>
-          <span className="font-bold pl-2">Anypoly</span>
           <MenubarMenu>
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent>
-              <MenubarItem onClick={() => setIsNewDialogOpen(true)}>
+              {/* <MenubarItem onClick={() => setIsNewDialogOpen(true)}>
                 New File
               </MenubarItem>
               <MenubarItem onClick={() => setIsRenameDialogOpen(true)}>
                 Rename
-              </MenubarItem>
+              </MenubarItem> */}
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
@@ -58,21 +52,11 @@ export const Sidebar = () => {
       <Separator />
       <div ref={ref} className="flex-1 p-2">
         <MeshTree
-          data={treeData}
+          data={meshes}
           height={height ?? 0}
           width={width ?? 0}
         />
       </div>
-      <NameDialog
-        type="new"
-        open={isNewDialogOpen}
-        onOpenChange={setIsNewDialogOpen}
-      />
-      <NameDialog
-        type="rename"
-        open={isRenameDialogOpen}
-        onOpenChange={setIsRenameDialogOpen}
-      />
     </div>
   )
 }

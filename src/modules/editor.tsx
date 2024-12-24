@@ -5,10 +5,10 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
-import { useMesh } from '@/lib/db'
+import { useFocusedMesh } from '@/lib'
 
 export const Editor = () => {
-  const mesh = useMesh()
+  const mesh = useFocusedMesh()
   return (
     <Tabs defaultValue="object" className="p-2 h-full flex flex-col">
       <TabsList className="grid w-full grid-cols-2">

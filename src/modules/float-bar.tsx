@@ -15,35 +15,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useDesign, useUpdateMeshes } from '@/lib/db'
-import type { Mesh3D } from '@/lib/types'
-import { createMesh } from '@/lib/utils'
+import { useCreateMesh, useDesign } from '@/lib'
 
 export const FloatBar = () => {
   const design = useDesign()
-  const updateDesignMeshes = useUpdateMeshes()
-  const onClick = (type: Mesh3D['type']) => {
-    const mesh = createMesh(type)
-    updateDesignMeshes([...(design?.meshes ?? []), mesh])
-  }
+  const createMesh = useCreateMesh()
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 shadow p-2 rounded-lg bg-white select-none">
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('group')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('group')}>
         <RectangleDashedIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('box')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('box')}>
         <SquareIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('circle')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('circle')}>
         <CircleIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('cylinder')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('cylinder')}>
         <CubeIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('sphere')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('sphere')}>
         <SphereIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => onClick('path')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('path')}>
         <PathIcon />
       </Button>
       <DropdownMenu>
@@ -53,7 +47,7 @@ export const FloatBar = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => onClick('cylinder')}>
+          <DropdownMenuItem onClick={() => createMesh('cylinder')}>
             <CylinderIcon />
             Cylinder
           </DropdownMenuItem>

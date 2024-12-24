@@ -1,4 +1,5 @@
-import { useDeferredValue, useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useAtom } from 'jotai'
 import {
   Dialog,
   DialogContent,
@@ -9,45 +10,65 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { useCreateDesign, useDesign, useUpdateDesignName } from '@/lib/db'
+import { isCreatingAtom, isRenamingAtom, useCreateDesign, useDesign, useUpdateDesignName } from '@/lib'
 
-type Props = {
-  type: 'new' | 'rename'
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-export const NameDialog = ({ type, open, onOpenChange }: Props) => {
-  const deferredOpen = useDeferredValue(open)
-  const [name, setName] = useState('')
+export const NameDialog = () => {
   const design = useDesign()
+  const [isRenaming, setIsRenaming] = useAtom(isRenamingAtom)
+  const [isCreating, setIsCreating] = useAtom(isCreatingAtom)
+  const [type, setType] = useState<'rename' | 'create'>('create')
+
+  const isRenamingRef = useRef(isRenaming)
+
+  const [name, setName] = useState('')
 
   const createDesign = useCreateDesign()
   const updateDesignName = useUpdateDesignName()
 
   useEffect(() => {
-    if (open && !deferredOpen) {
-      setName(type === 'rename' ? design?.name || '' : '')
+    if (isRenaming) {
+      setType('rename')
+    } else if (isCreating) {
+      setType('create')
     }
-  }, [open, deferredOpen, design, type])
+    if (!isRenaming && !isCreating) {
+      setName('')
+    }
+  }, [isRenaming, isCreating])
 
-  const onSubmit = () => {
-    if (type === 'new') {
-      createDesign(name)
-    } else {
-      updateDesignName(name)
+  useEffect(() => {
+    if (isRenaming && isRenaming !== isRenamingRef.current) {
+      isRenamingRef.current = isRenaming
+      setName(design?.name || '')
     }
-    onOpenChange(false)
+  }, [design, isRenamingRef, isRenaming])
+
+  const onSubmit = async () => {
+    if (isCreating) {
+      await createDesign(name)
+    } else {
+      await updateDesignName(name)
+    }
+    setIsRenaming(false)
+    setIsCreating(false)
+  }
+
+  const onOpenChange = (open: boolean) => {
+    if (!open) {
+      setIsRenaming(false)
+      setIsCreating(false)
+    }
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={isRenaming || isCreating} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{type === 'new' ? 'New File' : 'Rename'}</DialogTitle>
+          <DialogTitle>{type === 'create' ? 'New File' : 'Rename'}</DialogTitle>
           <DialogDescription>
             Enter the name of the
             {' '}
-            {type === 'new' ? 'new file' : 'file'}
+            {type === 'create' ? 'new file' : 'file'}
           </DialogDescription>
         </DialogHeader>
         <div className="pb-4">
@@ -55,7 +76,7 @@ export const NameDialog = ({ type, open, onOpenChange }: Props) => {
         </div>
         <DialogFooter>
           <Button type="submit" onClick={onSubmit}>
-            {type === 'new' ? 'Create' : 'Rename'}
+            {type === 'create' ? 'Create' : 'Rename'}
           </Button>
         </DialogFooter>
       </DialogContent>

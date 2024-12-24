@@ -1,9 +1,9 @@
-import { useAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { SVGLoader } from 'three/addons'
 import { Selection } from './outlines'
-import { selectedAtom } from '@/lib/atom'
+import { focusedIdAtom, focusedMeshAtom } from '@/lib/atom'
 import type { Mesh3D, PathMesh3D, ShapeMesh3D } from '@/lib/types'
 
 type PathMeshProps = {
@@ -94,11 +94,11 @@ type MeshProps = {
 }
 export const Mesh = ({ mesh }: MeshProps) => {
   const { id, type, position, rotation: [rx, ry, rz], scale, visible } = mesh
-  const [selected, setSelected] = useAtom(selectedAtom)
-  const isSelected = id === selected
-
+  const focusedId = useAtomValue(focusedIdAtom)
+  const setFocusedMesh = useSetAtom(focusedMeshAtom)
+  const isSelected = id === focusedId
   const onDoubleClick = () => {
-    setSelected(id)
+    setFocusedMesh(mesh)
   }
 
   const rotation = useMemo<[number, number, number]>(() => {

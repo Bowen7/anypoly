@@ -7,5 +7,6 @@ export default antfu({
     'style/brace-style': ['error', '1tbs'],
     'antfu/top-level-function': 'off',
     '@typescript-eslint/consistent-type-definitions': ['warn', 'type'],
+    'ts/ban-ts-comment': 'off',
   },
 })

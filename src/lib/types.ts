@@ -1,3 +1,5 @@
+import type { StringDecoder } from 'node:string_decoder'
+
 export type BaseMesh3D = {
   id: string
   name: string
@@ -32,7 +34,12 @@ export type Mesh3D = ShapeMesh3D | GroupMesh3D | PathMesh3D
 export type DesignModel = {
   id: number
   name: string
+  lastSelected: Date
+}
+
+export type SceneModel = {
+  id: number
+  design: number
   meshes: Mesh3D[]
-  created: Date
   updated: Date
 }

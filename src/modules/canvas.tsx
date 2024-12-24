@@ -7,7 +7,7 @@ import { useRef, useState } from 'react'
 import { GLTFExporter } from 'three/addons'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { FloatBar } from './float-bar'
-import { useDesign } from '@/lib/db'
+import { useMeshes } from '@/lib'
 import { Button } from '@/components/ui/button'
 import { Mesh } from '@/components/mesh'
 import { Outlines } from '@/components/outlines'
@@ -18,7 +18,7 @@ type Size = {
 }
 
 export const Canvas = () => {
-  const design = useDesign()
+  const meshes = useMeshes()
   const ref = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<Scene>(null)
   const [{ width, height }, setSize] = useState<Size>({
@@ -41,8 +41,6 @@ export const Canvas = () => {
     ref,
     onResize,
   })
-
-  const meshes = design?.meshes ?? []
 
   return (
     <div ref={ref} className="h-full relative" onMouseDown={e => e.preventDefault()}>
@@ -75,7 +73,6 @@ export const Canvas = () => {
         <OrbitControls />
       </ThreeCanvas>
       <div className="absolute top-4 right-4 shadow-lg px-2 py-1 bg-white rounded-md select-none flex items-center gap-2" onMouseDown={e => e.preventDefault()}>
-        <span className="text-sm">{design?.name}</span>
         <Button variant="ghost" size="icon" onClick={download} className="w-7 h-7">
           <DownloadSimpleIcon />
         </Button>

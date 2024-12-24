@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react'
+import { memo, useEffect, useLayoutEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { outlinesAtom } from '@/lib/atom'
@@ -15,7 +15,7 @@ export const Selection = memo(({ args, position, scale, rotation }: SelectionPro
   const ref = useRef<THREE.Group>(null)
   const setOutlines = useSetAtom(outlinesAtom)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ref.current || !ref.current.parent) {
       return
     }
@@ -26,6 +26,13 @@ export const Selection = memo(({ args, position, scale, rotation }: SelectionPro
     const geometry = new THREE.BoxGeometry(width, height, depth)
     setOutlines({ position, geometry })
   }, [position, scale, rotation, args, setOutlines])
+
+  useEffect(() => {
+    return () => {
+      setOutlines(null)
+    }
+  }, [setOutlines])
+
   return (
     <group ref={ref} />
   )
@@ -35,11 +42,13 @@ export const Outlines = memo(() => {
   const { position, geometry } = useAtomValue(outlinesAtom) ?? {}
 
   return (
-    <mesh
-      position={position}
-      geometry={geometry}
-    >
-      <meshStandardMaterial color="hotpink" wireframe />
-    </mesh>
+    geometry && (
+      <mesh
+        position={position}
+        geometry={geometry}
+      >
+        <meshStandardMaterial color="hotpink" wireframe />
+      </mesh>
+    )
   )
 })
