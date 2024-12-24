@@ -6,9 +6,9 @@ export const designAtom = atom<DesignModel | null>(null)
 export const isNodeTreeHoverAtom = atom(false)
 export const selectedAtom = atom<string | null>(null)
 
+export const minimizedAtom = atom(false)
+
 export const outlinesAtom = atom<{
   geometry: THREE.BufferGeometry
   position: [number, number, number]
-  scale: [number, number, number]
-  rotation: [number, number, number]
 } | null>(null)

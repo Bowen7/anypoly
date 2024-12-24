@@ -13,9 +13,10 @@ const tempGroup = createMesh('group')
 
 type Props = {
   data: Mesh3D[]
+  width: number
   height: number
 }
-export const NodeTree = ({ data, height }: Props) => {
+export const NodeTree = ({ data, width, height }: Props) => {
   const hoverRef = useRef<HTMLDivElement>(null)
   const setIsHover = useSetAtom(isNodeTreeHoverAtom)
   const isHover = useHover(hoverRef)
@@ -76,7 +77,12 @@ export const NodeTree = ({ data, height }: Props) => {
 
   return (
     <div ref={hoverRef}>
-      <Tree data={data} height={height} onMove={onMove}>
+      <Tree
+        data={data}
+        width={width}
+        height={height}
+        onMove={onMove}
+      >
         {Node}
       </Tree>
     </div>

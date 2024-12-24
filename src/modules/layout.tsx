@@ -20,7 +20,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Sidebar />
       </ResizablePanel>
       <ResizableHandle />
-      <ResizablePanel minSize={minMainSize}><main className="h-full">{children}</main></ResizablePanel>
+      <ResizablePanel minSize={minMainSize}>
+        <main className="h-full">{children}</main>
+      </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel minSize={minSideSize} defaultSize={minSideSize}>
         <Editor />

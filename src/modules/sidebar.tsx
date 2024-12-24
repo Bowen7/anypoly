@@ -21,7 +21,7 @@ export const Sidebar = () => {
   const [isNewDialogOpen, setIsNewDialogOpen] = useState(false)
   const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  const [{ height }, setSize] = useState<Size>({
+  const [{ height, width }, setSize] = useState<Size>({
     width: 0,
     height: 0,
   })
@@ -57,7 +57,11 @@ export const Sidebar = () => {
       </div>
       <Separator />
       <div ref={ref} className="flex-1 p-2">
-        <NodeTree data={treeData} height={height!} />
+        <NodeTree
+          data={treeData}
+          height={height ?? 0}
+          width={width ?? 0}
+        />
       </div>
       <NameDialog
         type="new"

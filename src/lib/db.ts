@@ -45,7 +45,8 @@ export const useUpdateMeshes = () => {
       return
     }
     await db.designs.update(design.id, {
-      meshes,
+      // Type assertion to avoid circular reference error
+      meshes: meshes as any,
       updated: new Date(),
     })
   }, [design])
