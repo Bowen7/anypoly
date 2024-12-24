@@ -6,7 +6,7 @@ import { produce } from 'immer'
 import { Node } from './node'
 import type { Mesh3D } from '@/lib/types'
 import { useRemoveMesh, useUpdateMeshes } from '@/lib/db'
-import { isNodeTreeHoverAtom, selectedAtom } from '@/lib/atom'
+import { isMeshTreeHoverAtom, selectedAtom } from '@/lib/atom'
 import { createMesh, visitMesh } from '@/lib/utils'
 
 const tempGroup = createMesh('group')
@@ -16,9 +16,9 @@ type Props = {
   width: number
   height: number
 }
-export const NodeTree = ({ data, width, height }: Props) => {
+export const MeshTree = ({ data, width, height }: Props) => {
   const hoverRef = useRef<HTMLDivElement>(null)
-  const setIsHover = useSetAtom(isNodeTreeHoverAtom)
+  const setIsHover = useSetAtom(isMeshTreeHoverAtom)
   const isHover = useHover(hoverRef)
   const setSelectedId = useSetAtom(selectedAtom)
   const removeMesh = useRemoveMesh()

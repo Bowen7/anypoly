@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { Separator } from '@/components/ui/separator'
-import { NodeTree } from '@/components/node-tree'
+import { MeshTree } from '@/components/mesh-tree'
 import {
   Menubar,
   MenubarContent,
@@ -57,7 +57,7 @@ export const Sidebar = () => {
       </div>
       <Separator />
       <div ref={ref} className="flex-1 p-2">
-        <NodeTree
+        <MeshTree
           data={treeData}
           height={height ?? 0}
           width={width ?? 0}
