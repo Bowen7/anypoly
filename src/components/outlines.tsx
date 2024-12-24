@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { outlinesAtom } from '@/lib/atom'
@@ -11,7 +11,7 @@ type SelectionProps = {
   rotation: [number, number, number]
   args: number[]
 }
-export const Selection = ({ args, position, scale, rotation }: SelectionProps) => {
+export const Selection = memo(({ args, position, scale, rotation }: SelectionProps) => {
   const ref = useRef<THREE.Group>(null)
   const setOutlines = useSetAtom(outlinesAtom)
 
@@ -24,24 +24,22 @@ export const Selection = ({ args, position, scale, rotation }: SelectionProps) =
     const height = box.max.y - box.min.y + OFFSET
     const depth = box.max.z - box.min.z + OFFSET
     const geometry = new THREE.BoxGeometry(width, height, depth)
-    setOutlines({ position, scale, rotation, geometry })
+    setOutlines({ position, geometry })
   }, [position, scale, rotation, args, setOutlines])
   return (
     <group ref={ref} />
   )
-}
+})
 
-export const Outlines = () => {
-  const { position, scale, rotation, geometry } = useAtomValue(outlinesAtom) ?? {}
+export const Outlines = memo(() => {
+  const { position, geometry } = useAtomValue(outlinesAtom) ?? {}
 
   return (
     <mesh
       position={position}
-      scale={scale}
-      rotation={rotation}
       geometry={geometry}
     >
       <meshStandardMaterial color="hotpink" wireframe />
     </mesh>
   )
-}
+})
