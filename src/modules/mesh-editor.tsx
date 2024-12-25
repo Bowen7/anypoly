@@ -23,8 +23,8 @@ const LABELS = {
   sphere: ['radius', 'widthSegs', 'heightSegs', 'phiStart', 'phiLen(*PI)', 'thetaStart', 'thetaLen(*PI)'],
   circle: ['radius', 'segs', 'thetaStart', 'thetaLen(*PI)'],
   // TODO: more args
-  cylinder: ['radiusTop', 'radiusBottom', 'height', 'radialSegs', 'heightSegs'],
-  cone: ['radius', 'height', 'radialSegs', 'heightSegs'],
+  cylinder: ['radiusTop', 'radiusBottom', 'height', 'radialSegs', 'heightSegs', 'openEnded', 'thetaStart', 'thetaLen(*PI)'],
+  cone: ['radius', 'height', 'radialSegs', 'heightSegs', 'openEnded', 'thetaStart', 'thetaLen(*PI)'],
   plane: ['width', 'height', 'widthSegs', 'heightSegs'],
   path: ['curveSegs', 'steps', 'depth', 'bevelEnabled', 'bThickness', 'bSize', 'bOffset', 'bSegments'],
 }
@@ -147,7 +147,7 @@ export const MeshEditor = ({ mesh }: Props) => {
                   className="max-w-24 h-7"
                   onChange={e => setDScale(Number(e.target.value))}
                 />
-                <Button onClick={onScaleClick} className="h-7" variant="outline">Scale</Button>
+                <Button onClick={onScaleClick} className="h-7" variant="outline">Scale d</Button>
               </div>
             </div>
           </EditorPanelItem>
@@ -176,7 +176,7 @@ export const MeshEditor = ({ mesh }: Props) => {
                 values={values.args}
                 labels={LABELS[values.type]}
                 n={argsN}
-                onChange={values => onChange({ args: values as number[] })}
+                onChange={values => onChange({ args: values as PathMesh3D['args'] })}
               />
             </div>
           </EditorPanelItem>

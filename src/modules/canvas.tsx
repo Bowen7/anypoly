@@ -37,6 +37,10 @@ export const Canvas = () => {
     setSceneRef(sceneRef)
   }, [setSceneRef])
 
+  useEffect(() => {
+    axesRef.current?.setColors('#facc15', '#4ade80', '#60a5fa')
+  }, [])
+
   return (
     <div ref={ref} className="h-full relative" onMouseDown={e => e.preventDefault()}>
       <ThreeCanvas style={{ width, height }} camera={{ position: [0, 0, 10] }}>

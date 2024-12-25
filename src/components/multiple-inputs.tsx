@@ -34,7 +34,7 @@ export const MultipleInputs = ({ values, labels, n = values.length, onChange }: 
               <div key={label} className="flex flex-col">
                 <Label className="ml-0.5 text-sm scale-90 block origin-left text-muted-foreground">{label}</Label>
                 <Toggle
-                  className="text-xs w-full h-7"
+                  className="text-xs w-full h-7 justify-start pl-3.5"
                   pressed={value}
                   onPressedChange={pressed => onChange(produce(values, (draft) => {
                     draft[index] = pressed as boolean
