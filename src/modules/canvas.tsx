@@ -1,14 +1,11 @@
-import type { Scene } from 'three'
-import { DownloadSimple as DownloadSimpleIcon } from '@phosphor-icons/react'
+import type { AxesHelper, Scene } from 'three'
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas as ThreeCanvas } from '@react-three/fiber'
-import { saveAs } from 'file-saver'
-import { useRef, useState } from 'react'
-import { GLTFExporter } from 'three/addons'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
+import { useSetAtom } from 'jotai'
 import { FloatBar } from './float-bar'
-import { useMeshes } from '@/lib'
-import { Button } from '@/components/ui/button'
+import { sceneRefAtom, useMeshes } from '@/lib'
 import { Mesh } from '@/components/mesh'
 import { Outlines } from '@/components/outlines'
 
@@ -21,6 +18,9 @@ export const Canvas = () => {
   const meshes = useMeshes()
   const ref = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<Scene>(null)
+  const axesRef = useRef<AxesHelper>(null)
+  const setSceneRef = useSetAtom(sceneRefAtom)
+
   const [{ width, height }, setSize] = useState<Size>({
     width: 0,
     height: 0,
@@ -28,19 +28,14 @@ export const Canvas = () => {
 
   const onResize = useDebounceCallback(setSize, 200)
 
-  const download = () => {
-    const exporter = new GLTFExporter()
-    exporter.parse(sceneRef.current!, (gltfJson) => {
-      saveAs(new Blob([gltfJson as ArrayBuffer], { type: 'application/octet-stream' }), 'test.glb')
-    }, (error) => {
-      console.error(error)
-    }, { binary: true })
-  }
-
   useResizeObserver({
     ref,
     onResize,
   })
+
+  useEffect(() => {
+    setSceneRef(sceneRef)
+  }, [setSceneRef])
 
   return (
     <div ref={ref} className="h-full relative" onMouseDown={e => e.preventDefault()}>
@@ -69,14 +64,9 @@ export const Canvas = () => {
         </scene>
         <Outlines />
         <Environment preset="sunset" environmentIntensity={0.5} />
-        <axesHelper args={[10]} />
+        <axesHelper ref={axesRef} args={[10]} />
         <OrbitControls />
       </ThreeCanvas>
-      <div className="absolute top-4 right-4 shadow-lg px-2 py-1 bg-white rounded-md select-none flex items-center gap-2" onMouseDown={e => e.preventDefault()}>
-        <Button variant="ghost" size="icon" onClick={download} className="w-7 h-7">
-          <DownloadSimpleIcon />
-        </Button>
-      </div>
       <FloatBar />
     </div>
   )

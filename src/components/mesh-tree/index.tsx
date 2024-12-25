@@ -46,6 +46,7 @@ export const MeshTree = ({ data, width, height }: Props) => {
         width={width}
         height={height}
         onMove={onMove}
+        rowClassName="focus:outline-none"
       >
         {Node}
       </Tree>

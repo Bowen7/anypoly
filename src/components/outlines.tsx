@@ -1,7 +1,8 @@
-import { memo, useEffect, useLayoutEffect, useRef } from 'react'
+import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { outlinesAtom } from '@/lib/atom'
+import { createPortal } from '@react-three/fiber'
+import { outlinesTargetAtom } from '@/lib/atom'
 
 const OFFSET = 0.1
 
@@ -12,8 +13,9 @@ type SelectionProps = {
   args: number[]
 }
 export const Selection = memo(({ args, position, scale, rotation }: SelectionProps) => {
-  const ref = useRef<THREE.Group>(null)
-  const setOutlines = useSetAtom(outlinesAtom)
+  const ref = useRef<THREE.Object3D>(null)
+  const target = useAtomValue(outlinesTargetAtom)
+  const [frameArgs, setFrameArgs] = useState<[number, number, number]>([0, 0, 0])
 
   useLayoutEffect(() => {
     if (!ref.current || !ref.current.parent) {
@@ -23,32 +25,40 @@ export const Selection = memo(({ args, position, scale, rotation }: SelectionPro
     const width = box.max.x - box.min.x + OFFSET
     const height = box.max.y - box.min.y + OFFSET
     const depth = box.max.z - box.min.z + OFFSET
-    const geometry = new THREE.BoxGeometry(width, height, depth)
-    setOutlines({ position, geometry })
-  }, [position, scale, rotation, args, setOutlines])
+    setFrameArgs([width, height, depth])
+  }, [scale, rotation, args])
 
-  useEffect(() => {
-    return () => {
-      setOutlines(null)
-    }
-  }, [setOutlines])
+  if (!target) {
+    return null
+  }
 
   return (
-    <group ref={ref} />
+    <>
+      <object3D ref={ref} />
+      {createPortal(
+        <mesh position={position}>
+          <boxGeometry args={frameArgs} />
+          <meshBasicMaterial color="#f472b6" wireframe />
+        </mesh>,
+        target,
+      )}
+    </>
   )
 })
 
 export const Outlines = memo(() => {
-  const { position, geometry } = useAtomValue(outlinesAtom) ?? {}
-
+  const ref = useRef<THREE.Object3D>(null)
+  const setTarget = useSetAtom(outlinesTargetAtom)
+  useLayoutEffect(() => {
+    if (!ref.current) {
+      return
+    }
+    setTarget(ref.current)
+    return () => {
+      setTarget(null)
+    }
+  }, [setTarget])
   return (
-    geometry && (
-      <mesh
-        position={position}
-        geometry={geometry}
-      >
-        <meshStandardMaterial color="hotpink" wireframe />
-      </mesh>
-    )
+    <object3D ref={ref} />
   )
 })

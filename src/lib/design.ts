@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { designIdAtom, meshesAtom, sceneIdAtom } from './atom'
 import { db } from './db'
 
@@ -73,4 +73,17 @@ export const useCreateDesign = () => {
     setDesignId(id)
     setSceneId(sceneId)
   }, [setDesignId, setSceneId])
+}
+
+export const useRemoveDesign = () => {
+  const [designId, setDesignId] = useAtom(designIdAtom)
+  return useCallback(async () => {
+    db.transaction('rw', db.designs, db.scenes, async () => {
+      return Promise.all([
+        db.designs.delete(designId),
+        db.scenes.where('design').equals(designId).delete(),
+      ])
+    })
+    setDesignId(-1)
+  }, [designId, setDesignId])
 }

@@ -2,9 +2,7 @@ import { useCallback } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import type { Mesh3D } from './types'
-import { designIdAtom, focusedIdAtom, focusedMeshAtom, meshesAtom } from './atom'
-import { db } from './db'
-import { useSetLatestDesign } from './design'
+import { focusedIdAtom, focusedMeshAtom, meshesAtom } from './atom'
 
 export const useMeshes = () => useAtomValue(meshesAtom)
 export const useFocusedMesh = () => useAtomValue(focusedMeshAtom)
@@ -24,20 +22,6 @@ export const visitMesh = (
       visitMesh(mesh.children, id, callback)
     }
   }
-}
-
-export const useRemoveDesign = () => {
-  const designId = useAtomValue(designIdAtom)
-  const setLatestDesign = useSetLatestDesign()
-  return useCallback(async () => {
-    db.transaction('rw', db.designs, db.scenes, async () => {
-      return Promise.all([
-        db.designs.delete(designId),
-        db.scenes.where('design').equals(designId).delete(),
-      ])
-    })
-    setLatestDesign()
-  }, [designId, setLatestDesign])
 }
 
 export const useRemoveMesh = () => {

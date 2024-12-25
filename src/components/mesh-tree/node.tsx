@@ -20,8 +20,13 @@ export const Node = memo((props: NodeRendererProps<Mesh3D>) => {
     node.toggle()
   }
   return (
-    <div style={style} ref={dragHandle} className="flex items-center gap-2">
-      <span className={clsx('text-sm', { 'text-blue-500': isSelected })} onClick={() => setFocusedMesh(data)}>{data.name}</span>
+    <div
+      style={style}
+      ref={dragHandle}
+      className={clsx('flex items-center gap-2 py-1 pr-2 rounded-md focus:outline-none hover:bg-secondary hover:text-secondary-foreground', { 'bg-secondary text-secondary-foreground': isSelected })}
+      onClick={() => setFocusedMesh(data)}
+    >
+      <span className={clsx('text-sm pl-2')}>{data.name}</span>
       {isLeaf ? null : <CaretRightIcon className={clsx({ 'rotate-90': isOpen, 'invisible': !isHover })} onClick={onClick} />}
     </div>
   )
