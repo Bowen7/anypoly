@@ -76,13 +76,13 @@ const UnifiedMesh = memo((props: UnifiedMeshProps) => {
       onPointerOut={() => setIsHovered(false)}
     >
       <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-      {isSelected && (
+      {isSelected && visible && (
         <Selection
           deps={deps}
           color="#f472b6"
         />
       )}
-      {!isSelected && isHovered && (
+      {!isSelected && isHovered && visible && (
         <Selection
           deps={deps}
           color="#60a5fa"
@@ -116,7 +116,7 @@ export const Mesh = ({ mesh }: MeshProps) => {
         {mesh.children.map(child => (
           <Mesh key={child.id} mesh={child} />
         ))}
-        {isSelected && (
+        {isSelected && visible && (
           <Selection
             deps={deps}
             color="#f472b6"

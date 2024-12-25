@@ -59,6 +59,17 @@ export const useUpdateMesh = () => {
   }, [focusedId, focusedMesh, setFocusedMesh, setMeshes])
 }
 
+export const useSetMeshVisible = () => {
+  const setMeshes = useSetAtom(meshesAtom)
+  return useCallback(async (id: string, visible: boolean) => {
+    setMeshes((draft) => {
+      visitMesh(draft, id, (collection, index) => {
+        collection[index].visible = visible
+      })
+    })
+  }, [setMeshes])
+}
+
 export const createMesh = (type: Mesh3D['type']): Mesh3D => {
   const id = nanoid()
   const name = type.charAt(0).toUpperCase() + type.slice(1)

@@ -27,7 +27,9 @@ export const MeshTree = ({ data, width, height }: Props) => {
     if (e.key === 'Escape') {
       setFocusedMesh(null)
     } else if (e.key === 'Backspace') {
-      // TODO: don't remove mesh when cursor is in the input
+      if (e.target instanceof HTMLInputElement) {
+        return
+      }
       removeMesh()
     }
   }, [setFocusedMesh, removeMesh])
@@ -47,6 +49,8 @@ export const MeshTree = ({ data, width, height }: Props) => {
         height={height}
         onMove={onMove}
         rowClassName="focus:outline-none"
+        rowHeight={28}
+        indent={16}
       >
         {Node}
       </Tree>
