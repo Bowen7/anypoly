@@ -65,10 +65,12 @@ export const Node = memo((props: NodeRendererProps<Mesh3D>) => {
       className={clsx('flex focus:outline-none py-0.5', { 'text-muted-foreground': !visible, 'text-secondary-foreground': isSelected && visible, 'hover:text-secondary-foreground': visible })}
       onClick={() => setFocusedMesh(data)}
     >
-      <div className={clsx('flex items-center flex-1 py-0.5 rounded-md group', { 'bg-secondary': isSelected, 'hover:bg-secondary': !isSelected })}>
-        {isLeaf ? <span className="w-4 h-4" /> : <CaretRightIcon className={clsx({ 'rotate-90': isOpen, 'invisible': !isHover })} onClick={onClick} />}
-        {icon}
-        <span className={clsx('text-sm pl-0.5')}>{data.name}</span>
+      <div className={clsx('flex items-center flex-1 py-0.5 rounded-md group justify-between pr-2', { 'bg-secondary': isSelected, 'hover:bg-secondary': !isSelected })}>
+        <div className="flex items-center">
+          {isLeaf ? <span className="w-4 h-4" /> : <CaretRightIcon className={clsx({ 'rotate-90': isOpen, 'invisible': !isHover })} onClick={onClick} />}
+          {icon}
+          <span className={clsx('text-sm pl-0.5')}>{data.name}</span>
+        </div>
         {visible ? <EyeIcon className="invisible group-hover:visible w-3.5 h-3.5 ml-1" onClick={onEyeClick} /> : <EyeSlashIcon className="w-3.5 h-3.5 ml-1" onClick={onEyeClick} />}
       </div>
     </div>

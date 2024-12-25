@@ -16,7 +16,7 @@ type EditorPanelGroupProps = {
   className?: string
 }
 export const EditorPanelGroup = ({ children }: EditorPanelGroupProps) => {
-  return <div className="p-2 flex flex-col gap-4">{children}</div>
+  return <div className="px-3 py-2 flex flex-col gap-4">{children}</div>
 }
 
 type EditorPanelItemProps = {
@@ -25,7 +25,7 @@ type EditorPanelItemProps = {
 }
 export const EditorPanelItem = ({ children, label }: EditorPanelItemProps) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-1.5">
       <Label>{label}</Label>
       <div className="flex flex-row gap-2 items-center">{children}</div>
     </div>

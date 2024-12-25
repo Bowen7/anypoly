@@ -1,7 +1,7 @@
 import { produce } from 'immer'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
+import { Toggle } from '@/components/ui/toggle'
 
 type Props = {
   n?: number
@@ -33,15 +33,15 @@ export const MultipleInputs = ({ values, labels, n = values.length, onChange }: 
           : (
               <div key={label} className="flex flex-col">
                 <Label className="ml-0.5 text-sm scale-90 block origin-left text-muted-foreground">{label}</Label>
-                <div className="flex flex-1 items-center">
-                  <Checkbox
-                    checked={value}
-                    onCheckedChange={checked => onChange(produce(values, (draft) => {
-                      draft[index] = checked as boolean
-                    }))}
-                    className="ml-1.5"
-                  />
-                </div>
+                <Toggle
+                  className="text-xs w-full h-7"
+                  pressed={value}
+                  onPressedChange={pressed => onChange(produce(values, (draft) => {
+                    draft[index] = pressed as boolean
+                  }))}
+                >
+                  {value ? 'True' : 'False'}
+                </Toggle>
               </div>
             )
       })}
