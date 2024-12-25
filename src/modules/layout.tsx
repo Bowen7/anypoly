@@ -12,20 +12,25 @@ import { MinimizedBar } from '@/components/minimized-bar'
 import { EmptyState } from '@/components/empty-state'
 import { Spinner } from '@/components/ui/spinner'
 
-const MIN_SIDE_WIDTH = 250
+const MIN_SIDE_WIDTH = 275
+const MAX_SIDE_WIDTH = 350
 const MIN_MAIN_WIDTH = 500
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const minimized = useAtomValue(minimizedAtom)
   const { width = 0 } = useWindowSize()
   const minSideSize = MIN_SIDE_WIDTH / width * 100
+  const maxSideSize = MAX_SIDE_WIDTH / width * 100
   const minMainSize = MIN_MAIN_WIDTH / width * 100
   const designs = useDesigns()
   return (
     <ResizablePanelGroup direction="horizontal">
       {!minimized && (
         <>
-          <ResizablePanel minSize={minSideSize} defaultSize={minSideSize}>
+          <ResizablePanel
+            minSize={minSideSize}
+            defaultSize={minSideSize}
+          >
             <Sidebar />
           </ResizablePanel>
           <ResizableHandle />
@@ -41,7 +46,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {!minimized && (
         <>
           <ResizableHandle />
-          <ResizablePanel minSize={minSideSize} defaultSize={minSideSize}>
+          <ResizablePanel
+            minSize={minSideSize}
+            maxSize={maxSideSize}
+            defaultSize={minSideSize}
+          >
             <Editor />
           </ResizablePanel>
         </>

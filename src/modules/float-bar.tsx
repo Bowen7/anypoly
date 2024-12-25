@@ -25,13 +25,13 @@ export const FloatBar = () => {
       <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('group')}>
         <RectangleDashedIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('box')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('plane')}>
         <SquareIcon />
       </Button>
       <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('circle')}>
         <CircleIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('cylinder')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('box')}>
         <CubeIcon />
       </Button>
       <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('sphere')}>

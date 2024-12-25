@@ -87,28 +87,28 @@ export const createMesh = (type: Mesh3D['type']): Mesh3D => {
         ...mesh,
         type,
         color,
-        args: [1, 16, 16],
+        args: [1, 16, 16, 0, 2, 0, 1],
       }
     case 'circle':
       return {
         ...mesh,
         type,
         color,
-        args: [1, 16],
+        args: [1, 16, 0, 2],
       }
     case 'cylinder':
       return {
         ...mesh,
         type,
         color,
-        args: [1, 1, 1, 8, 1],
+        args: [1, 1, 1, 8, 1, false, 0, 2],
       }
     case 'cone':
       return {
         ...mesh,
         type,
         color,
-        args: [1, 1, 8, 1],
+        args: [1, 1, 8, 1, false, 0, 2],
       }
     case 'plane':
       return {
@@ -129,8 +129,7 @@ export const createMesh = (type: Mesh3D['type']): Mesh3D => {
         type,
         d: 'M 0 2 v -2 h 2 a 1 1 0.9 0 1 0 2 a 1 1 0.9 0 1 -2 0 z',
         extrude: false,
-        bevelEnabled: false,
-        args: [12, 2, 5, 1, 1, 0, 1],
+        args: [12, 1, 1, true, 0.2, 0.1, 0, 3],
         color,
       }
     default:

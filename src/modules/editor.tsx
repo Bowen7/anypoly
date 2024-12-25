@@ -10,8 +10,8 @@ import { useFocusedMesh } from '@/lib'
 export const Editor = () => {
   const mesh = useFocusedMesh()
   return (
-    <Tabs defaultValue="mesh" className="p-2 h-full flex flex-col">
-      <TabsList className="grid w-full grid-cols-2">
+    <Tabs defaultValue="mesh" className="h-full flex flex-col">
+      <TabsList className="grid grid-cols-2 m-2">
         <TabsTrigger value="mesh">Mesh</TabsTrigger>
         <TabsTrigger value="global">Global</TabsTrigger>
       </TabsList>

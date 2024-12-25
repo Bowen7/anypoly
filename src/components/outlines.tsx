@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { memo, useLayoutEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { createPortal } from '@react-three/fiber'
@@ -7,15 +7,14 @@ import { outlinesTargetAtom } from '@/lib/atom'
 const OFFSET = 0.1
 
 type SelectionProps = {
-  position: [number, number, number]
-  scale: [number, number, number]
-  rotation: [number, number, number]
-  args: number[]
+  deps: any[]
+  color: string
 }
-export const Selection = memo(({ args, position, scale, rotation }: SelectionProps) => {
+export const Selection = memo(({ color, deps }: SelectionProps) => {
   const ref = useRef<THREE.Object3D>(null)
   const target = useAtomValue(outlinesTargetAtom)
   const [frameArgs, setFrameArgs] = useState<[number, number, number]>([0, 0, 0])
+  const [position, setPosition] = useState<[number, number, number]>([0, 0, 0])
 
   useLayoutEffect(() => {
     if (!ref.current || !ref.current.parent) {
@@ -25,8 +24,13 @@ export const Selection = memo(({ args, position, scale, rotation }: SelectionPro
     const width = box.max.x - box.min.x + OFFSET
     const height = box.max.y - box.min.y + OFFSET
     const depth = box.max.z - box.min.z + OFFSET
+    const x = (box.max.x + box.min.x) / 2
+    const y = (box.max.y + box.min.y) / 2
+    const z = (box.max.z + box.min.z) / 2
     setFrameArgs([width, height, depth])
-  }, [scale, rotation, args])
+    setPosition([x, y, z])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
 
   if (!target) {
     return null
@@ -38,7 +42,7 @@ export const Selection = memo(({ args, position, scale, rotation }: SelectionPro
       {createPortal(
         <mesh position={position}>
           <boxGeometry args={frameArgs} />
-          <meshBasicMaterial color="#f472b6" wireframe />
+          <meshBasicMaterial color={color} wireframe />
         </mesh>,
         target,
       )}
