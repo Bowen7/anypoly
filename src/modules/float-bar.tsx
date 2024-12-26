@@ -15,29 +15,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { useCreateMesh, useDesign } from '@/lib'
+import { useCreateObject, useDesign } from '@/lib'
 
 export const FloatBar = () => {
   const design = useDesign()
-  const createMesh = useCreateMesh()
+  const createObject = useCreateObject()
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 shadow p-2 rounded-lg bg-white select-none">
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('group')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('group')}>
         <RectangleDashedIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('plane')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('plane')}>
         <SquareIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('circle')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('circle')}>
         <CircleIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('box')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('box')}>
         <CubeIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('sphere')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('sphere')}>
         <SphereIcon />
       </Button>
-      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createMesh('path')}>
+      <Button variant="ghost" className="w-7 h-7" disabled={!design} onClick={() => createObject('path')}>
         <PathIcon />
       </Button>
       <DropdownMenu>
@@ -47,7 +47,7 @@ export const FloatBar = () => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
-          <DropdownMenuItem onClick={() => createMesh('cylinder')}>
+          <DropdownMenuItem onClick={() => createObject('cylinder')}>
             <CylinderIcon />
             Cylinder
           </DropdownMenuItem>

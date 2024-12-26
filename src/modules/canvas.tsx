@@ -5,9 +5,9 @@ import { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { useSetAtom } from 'jotai'
 import { FloatBar } from './float-bar'
-import { sceneRefAtom, useMeshes } from '@/lib'
-import { Mesh } from '@/components/mesh'
-import { Outlines } from '@/components/outlines'
+import { sceneRefAtom, useObjects } from '@/lib'
+import { Object } from '@/components/object'
+import { PortalTarget } from '@/components/portal'
 
 type Size = {
   width?: number
@@ -15,7 +15,7 @@ type Size = {
 }
 
 export const Canvas = () => {
-  const meshes = useMeshes()
+  const objects = useObjects()
   const ref = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<Scene>(null)
   const axesRef = useRef<AxesHelper>(null)
@@ -62,14 +62,14 @@ export const Canvas = () => {
           shadow-camera-right={50}
         />
         <scene ref={sceneRef}>
-          {meshes.map(mesh => (
-            <Mesh key={mesh.id} mesh={mesh} />
+          {objects.map(object => (
+            <Object key={object.id} object={object} />
           ))}
         </scene>
-        <Outlines />
+        <PortalTarget />
         <Environment preset="sunset" environmentIntensity={0.5} />
         <axesHelper ref={axesRef} args={[10]} />
-        <OrbitControls />
+        <OrbitControls makeDefault />
       </ThreeCanvas>
       <FloatBar />
     </div>

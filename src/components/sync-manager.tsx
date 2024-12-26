@@ -1,20 +1,20 @@
 import { useEffect, useRef } from 'react'
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue } from 'jotai'
 import debounce from 'lodash-es/debounce'
 import { db } from '@/lib/db'
-import { designIdAtom, meshesAtom, sceneIdAtom, useSetLatestDesign } from '@/lib'
-import type { Mesh3D } from '@/lib/types'
+import { designIdAtom, objectsAtom, sceneIdAtom, useSetLatestDesign } from '@/lib'
+import type { PolyObject } from '@/lib/types'
 
-const debouncedSyncMeshes = debounce((sceneId: number, meshes: Mesh3D[]) => {
+const debouncedSyncObjects = debounce((sceneId: number, objects: PolyObject[]) => {
   // @ts-ignore
   db.scenes.update(sceneId, {
-    meshes,
+    objects,
     updated: new Date(),
   })
 }, 1000)
 
 export const SyncManager = () => {
-  const meshes = useAtomValue(meshesAtom)
+  const objects = useAtomValue(objectsAtom)
   const sceneId = useAtomValue(sceneIdAtom)
   const designId = useAtomValue(designIdAtom)
   const setLatestDesign = useSetLatestDesign()
@@ -24,9 +24,9 @@ export const SyncManager = () => {
     if (prevSceneId.current !== sceneId) {
       prevSceneId.current = sceneId
     } else {
-      debouncedSyncMeshes(sceneId, meshes)
+      debouncedSyncObjects(sceneId, objects)
     }
-  }, [meshes, sceneId])
+  }, [objects, sceneId])
 
   useEffect(() => {
     if (designId === -1) {

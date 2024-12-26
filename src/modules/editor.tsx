@@ -1,27 +1,27 @@
-import { MeshEditor } from './mesh-editor'
+import { ObjectEditor } from './object-editor'
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs'
-import { useFocusedMesh } from '@/lib'
+import { useFocusedObject } from '@/lib'
 import { Separator } from '@/components/ui/separator'
 
 export const Editor = () => {
-  const mesh = useFocusedMesh()
+  const object = useFocusedObject()
   return (
-    <Tabs defaultValue="mesh" className="h-full flex flex-col">
+    <Tabs defaultValue="object" className="h-full flex flex-col">
       <TabsList className="grid grid-cols-2 m-3">
-        <TabsTrigger value="mesh">Mesh</TabsTrigger>
+        <TabsTrigger value="object">Object</TabsTrigger>
         <TabsTrigger value="global">Global</TabsTrigger>
       </TabsList>
       <Separator />
-      <TabsContent value="mesh" className="flex-1">
-        {mesh && <MeshEditor mesh={mesh} key={mesh.id} />}
+      <TabsContent value="object" className="flex-1">
+        {object && <ObjectEditor object={object} key={object.id} />}
       </TabsContent>
       <TabsContent value="global">
-        456
+        TODO
       </TabsContent>
     </Tabs>
   )

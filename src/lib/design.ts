@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { designIdAtom, meshesAtom, sceneIdAtom } from './atom'
+import { designIdAtom, objectsAtom, sceneIdAtom } from './atom'
 import { db } from './db'
 
 export const useDesigns = () => useLiveQuery(() => {
@@ -25,7 +25,7 @@ export const useDesign = () => {
 export const useSwitchDesign = () => {
   const setDesignId = useSetAtom(designIdAtom)
   const setSceneId = useSetAtom(sceneIdAtom)
-  const setMeshes = useSetAtom(meshesAtom)
+  const setObjects = useSetAtom(objectsAtom)
   return useCallback(async (id: number) => {
     await db.designs.update(id, {
       lastSelected: new Date(),
@@ -35,14 +35,14 @@ export const useSwitchDesign = () => {
     if (!scene) {
       sceneId = await db.scenes.add({
         design: id,
-        meshes: [],
+        objects: [],
         updated: new Date(),
       })
     }
     setDesignId(id)
     setSceneId(sceneId ?? -1)
-    setMeshes(scene?.meshes ?? [])
-  }, [setDesignId, setSceneId, setMeshes])
+    setObjects(scene?.objects ?? [])
+  }, [setDesignId, setSceneId, setObjects])
 }
 
 export const useSetLatestDesign = () => {
@@ -67,7 +67,7 @@ export const useCreateDesign = () => {
     })
     const sceneId = await db.scenes.add({
       design: id,
-      meshes: [],
+      objects: [],
       updated: new Date(),
     })
     setDesignId(id)

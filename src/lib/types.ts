@@ -1,4 +1,4 @@
-export type BaseMesh3D = {
+export type BaseObject = {
   id: string
   name: string
   position: [number, number, number]
@@ -7,45 +7,45 @@ export type BaseMesh3D = {
   visible: boolean
 }
 
-export type BoxMesh3D = BaseMesh3D & {
+export type PolyBoxMesh = BaseObject & {
   color: string
   type: 'box'
   args: [number, number, number, number, number, number]
 }
-export type SphereMesh3D = BaseMesh3D & {
+export type PolySphereMesh = BaseObject & {
   color: string
   type: 'sphere'
   args: [number, number, number, number, number, number, number]
 }
-export type CircleMesh3D = BaseMesh3D & {
+export type PolyCircleMesh = BaseObject & {
   color: string
   type: 'circle'
   args: [number, number, number, number]
 }
-export type CylinderMesh3D = BaseMesh3D & {
+export type PolyCylinderMesh = BaseObject & {
   color: string
   type: 'cylinder'
   args: [number, number, number, number, number, boolean, number, number]
 }
-export type ConeMesh3D = BaseMesh3D & {
+export type PolyConeMesh = BaseObject & {
   color: string
   type: 'cone'
   args: [number, number, number, number, boolean, number, number]
 }
-export type PlaneMesh3D = BaseMesh3D & {
+export type PolyPlaneMesh = BaseObject & {
   color: string
   type: 'plane'
   args: [number, number, number, number]
 }
 
-export type ShapeMesh3D = BoxMesh3D | SphereMesh3D | CircleMesh3D | CylinderMesh3D | ConeMesh3D | PlaneMesh3D
+export type PolyShapeMesh = PolyBoxMesh | PolySphereMesh | PolyCircleMesh | PolyCylinderMesh | PolyConeMesh | PolyPlaneMesh
 
-export type GroupMesh3D = BaseMesh3D & {
+export type PolyGroup = BaseObject & {
   type: 'group'
-  children: Mesh3D[]
+  children: PolyObject[]
 }
 
-export type PathMesh3D = BaseMesh3D & {
+export type PolyPathMesh = BaseObject & {
   type: 'path'
   d: string
   color: string
@@ -53,7 +53,8 @@ export type PathMesh3D = BaseMesh3D & {
   args: [number, number, number, boolean, number, number, number, number]
 }
 
-export type Mesh3D = ShapeMesh3D | GroupMesh3D | PathMesh3D
+export type PolyObject = PolyShapeMesh | PolyGroup | PolyPathMesh
+export type PolyMesh = PolyShapeMesh | PolyPathMesh
 
 export type DesignModel = {
   id: number
@@ -64,6 +65,6 @@ export type DesignModel = {
 export type SceneModel = {
   id: number
   design: number
-  meshes: Mesh3D[]
+  objects: PolyObject[]
   updated: Date
 }

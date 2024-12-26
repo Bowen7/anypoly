@@ -14,17 +14,17 @@ import {
   Square as SquareIcon,
 } from '@phosphor-icons/react'
 import clsx from 'clsx'
-import { focusedIdAtom, focusedMeshAtom, isMeshTreeHoverAtom, useSetMeshVisible } from '@/lib'
-import type { Mesh3D } from '@/lib'
+import { focusedIdAtom, focusedObjectAtom, isObjectTreeHoverAtom, useSetObjectVisible } from '@/lib'
+import type { PolyObject } from '@/lib/types'
 
-export const Node = memo((props: NodeRendererProps<Mesh3D>) => {
+export const Node = memo((props: NodeRendererProps<PolyObject>) => {
   const { node, style, dragHandle } = props
   const { data, isLeaf, isOpen } = node
   const { visible } = data
-  const isHover = useAtomValue(isMeshTreeHoverAtom)
+  const isHover = useAtomValue(isObjectTreeHoverAtom)
   const focusedId = useAtomValue(focusedIdAtom)
-  const setFocusedMesh = useSetAtom(focusedMeshAtom)
-  const setMeshVisible = useSetMeshVisible()
+  const setFocusedObject = useSetAtom(focusedObjectAtom)
+  const setObjectVisible = useSetObjectVisible()
 
   const isSelected = focusedId === data.id
 
@@ -35,7 +35,7 @@ export const Node = memo((props: NodeRendererProps<Mesh3D>) => {
 
   const onEyeClick = (e: React.MouseEvent<SVGSVGElement>) => {
     e.stopPropagation()
-    setMeshVisible(data.id, !data.visible)
+    setObjectVisible(data.id, !data.visible)
   }
 
   const icon = useMemo(() => {
@@ -63,7 +63,7 @@ export const Node = memo((props: NodeRendererProps<Mesh3D>) => {
       style={style}
       ref={dragHandle}
       className={clsx('flex focus:outline-none py-0.5', { 'text-muted-foreground': !visible, 'text-secondary-foreground': isSelected && visible, 'hover:text-secondary-foreground': visible })}
-      onClick={() => setFocusedMesh(data)}
+      onClick={() => setFocusedObject(data)}
     >
       <div className={clsx('flex items-center flex-1 py-0.5 rounded-md group justify-between pr-2', { 'bg-secondary': isSelected, 'hover:bg-secondary': !isSelected })}>
         <div className="flex items-center">

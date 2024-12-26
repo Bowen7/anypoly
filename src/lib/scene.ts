@@ -1,83 +1,83 @@
 import { useCallback } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
-import type { Mesh3D } from './types'
-import { focusedIdAtom, focusedMeshAtom, meshesAtom } from './atom'
+import type { PolyObject } from './types'
+import { focusedIdAtom, focusedObjectAtom, objectsAtom } from './atom'
 
-export const useMeshes = () => useAtomValue(meshesAtom)
-export const useFocusedMesh = () => useAtomValue(focusedMeshAtom)
+export const useObjects = () => useAtomValue(objectsAtom)
+export const useFocusedObject = () => useAtomValue(focusedObjectAtom)
 
-export const visitMesh = (
-  meshes: Mesh3D[],
+export const visitObjects = (
+  objects: PolyObject[],
   id: string,
-  callback: (collection: Mesh3D[], index: number) => void,
+  callback: (collection: PolyObject[], index: number) => void,
 ) => {
-  for (let i = 0; i < meshes.length; i++) {
-    const mesh = meshes[i]
-    if (mesh.id === id) {
-      callback(meshes, i)
+  for (let i = 0; i < objects.length; i++) {
+    const object = objects[i]
+    if (object.id === id) {
+      callback(objects, i)
       return
     }
-    if (mesh.type === 'group' && mesh.children) {
-      visitMesh(mesh.children, id, callback)
+    if (object.type === 'group' && object.children) {
+      visitObjects(object.children, id, callback)
     }
   }
 }
 
-export const useRemoveMesh = () => {
-  const setFocusedMesh = useSetAtom(focusedMeshAtom)
+export const useRemoveObject = () => {
+  const setFocusedObject = useSetAtom(focusedObjectAtom)
   const focusedId = useAtomValue(focusedIdAtom)
-  const setMeshes = useSetAtom(meshesAtom)
+  const setObjects = useSetAtom(objectsAtom)
   return useCallback(() => {
     if (!focusedId) {
       return
     }
-    setMeshes((draft) => {
-      visitMesh(draft, focusedId, (collection, index) => {
+    setObjects((draft) => {
+      visitObjects(draft, focusedId, (collection, index) => {
         collection.splice(index, 1)
       })
     })
-    setFocusedMesh(null)
-  }, [focusedId, setFocusedMesh, setMeshes])
+    setFocusedObject(null)
+  }, [focusedId, setFocusedObject, setObjects])
 }
 
-export const useUpdateMesh = () => {
+export const useUpdateObject = () => {
   const focusedId = useAtomValue(focusedIdAtom)
-  const [focusedMesh, setFocusedMesh] = useAtom(focusedMeshAtom)
-  const setMeshes = useSetAtom(meshesAtom)
-  return useCallback(async (partial: Partial<Mesh3D>) => {
-    if (!focusedMesh) {
+  const [focusedObject, setFocusedObject] = useAtom(focusedObjectAtom)
+  const setObjects = useSetAtom(objectsAtom)
+  return useCallback(async (partial: Partial<PolyObject>) => {
+    if (!focusedObject) {
       return
     }
-    const mesh = { ...focusedMesh, ...partial } as Mesh3D
-    setFocusedMesh(mesh)
-    setMeshes((draft) => {
-      visitMesh(draft, focusedId, (collection, index) => {
-        collection[index] = mesh
+    const object = { ...focusedObject, ...partial } as PolyObject
+    setFocusedObject(object)
+    setObjects((draft) => {
+      visitObjects(draft, focusedId, (collection, index) => {
+        collection[index] = object
       })
     })
-  }, [focusedId, focusedMesh, setFocusedMesh, setMeshes])
+  }, [focusedId, focusedObject, setFocusedObject, setObjects])
 }
 
-export const useSetMeshVisible = () => {
-  const setMeshes = useSetAtom(meshesAtom)
+export const useSetObjectVisible = () => {
+  const setObjects = useSetAtom(objectsAtom)
   return useCallback(async (id: string, visible: boolean) => {
-    setMeshes((draft) => {
-      visitMesh(draft, id, (collection, index) => {
+    setObjects((draft) => {
+      visitObjects(draft, id, (collection, index) => {
         collection[index].visible = visible
       })
     })
-  }, [setMeshes])
+  }, [setObjects])
 }
 
-export const createMesh = (type: Mesh3D['type']): Mesh3D => {
+export const createObject = (type: PolyObject['type']): PolyObject => {
   const id = nanoid()
   const name = type.charAt(0).toUpperCase() + type.slice(1)
   const color = '#0ff0f0'
   const position: [number, number, number] = [0, 0, 0]
   const rotation: [number, number, number] = [0, 0, 0]
   const scale: [number, number, number] = [1, 1, 1]
-  const mesh = {
+  const object = {
     id,
     name,
     position,
@@ -88,55 +88,55 @@ export const createMesh = (type: Mesh3D['type']): Mesh3D => {
   switch (type) {
     case 'box':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 1, 1, 1, 1, 1],
       }
     case 'sphere':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 16, 16, 0, 2, 0, 1],
       }
     case 'circle':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 16, 0, 2],
       }
     case 'cylinder':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 1, 1, 8, 1, false, 0, 2],
       }
     case 'cone':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 1, 8, 1, false, 0, 2],
       }
     case 'plane':
       return {
-        ...mesh,
+        ...object,
         type,
         color,
         args: [1, 1, 1, 1],
       }
     case 'group':
       return {
-        ...mesh,
+        ...object,
         type,
         children: [],
       }
     case 'path':
       return {
-        ...mesh,
+        ...object,
         type,
         d: 'M 0 2 v -2 h 2 a 1 1 0.9 0 1 0 2 a 1 1 0.9 0 1 -2 0 z',
         extrude: false,
@@ -144,51 +144,51 @@ export const createMesh = (type: Mesh3D['type']): Mesh3D => {
         color,
       }
     default:
-      throw new Error(`Unknown mesh type: ${type}`)
+      throw new Error(`Unknown object type: ${type}`)
   }
 }
 
-export const useCreateMesh = () => {
-  const setMeshes = useSetAtom(meshesAtom)
-  return useCallback((type: Mesh3D['type']) => {
-    const mesh = createMesh(type)
-    setMeshes((draft) => {
-      draft.push(mesh)
+export const useCreateObject = () => {
+  const setObjects = useSetAtom(objectsAtom)
+  return useCallback((type: PolyObject['type']) => {
+    const object = createObject(type)
+    setObjects((draft) => {
+      draft.push(object)
     })
-  }, [setMeshes])
+  }, [setObjects])
 }
 
-const TEMP_GROUP = createMesh('group')
+const TEMP_GROUP = createObject('group')
 
-export const useMoveMesh = () => {
-  const setMeshes = useSetAtom(meshesAtom)
+export const useMoveObject = () => {
+  const setObjects = useSetAtom(objectsAtom)
   return useCallback(({ dragIds, parentId, index }: { dragIds: string[], parentId: string | null, index: number }) => {
-    setMeshes((draft) => {
+    setObjects((draft) => {
       const id = dragIds[0]
       if (!id) {
         return
       }
-      let mesh: Mesh3D | null = null
-      visitMesh(draft, id, (collection, index) => {
-        mesh = collection[index]
+      let object: PolyObject | null = null
+      visitObjects(draft, id, (collection, index) => {
+        object = collection[index]
         collection[index] = TEMP_GROUP
       })
-      if (!mesh) {
+      if (!object) {
         return
       }
       if (parentId === null) {
-        draft.splice(index, 0, mesh)
+        draft.splice(index, 0, object)
       } else {
-        visitMesh(draft, parentId, (collection, i) => {
+        visitObjects(draft, parentId, (collection, i) => {
           const group = collection[i]
           if (group.type === 'group') {
-            group.children.splice(index, 0, mesh!)
+            group.children.splice(index, 0, object!)
           }
         })
       }
-      visitMesh(draft, TEMP_GROUP.id, (collection, index) => {
+      visitObjects(draft, TEMP_GROUP.id, (collection, index) => {
         collection.splice(index, 1)
       })
     })
-  }, [setMeshes])
+  }, [setObjects])
 }

@@ -3,8 +3,8 @@ import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { SidebarSimple as SidebarIcon } from '@phosphor-icons/react'
 import { useSetAtom } from 'jotai'
 import { Separator } from '@/components/ui/separator'
-import { MeshTree } from '@/components/mesh-tree'
-import { minimizedAtom, useMeshes } from '@/lib'
+import { ObjectTree } from '@/components/object-tree'
+import { minimizedAtom, useObjects } from '@/lib'
 import { LogoMenu } from '@/components/logo-menu'
 import { DesignCombo } from '@/components/design-combo'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,7 @@ type Size = {
 }
 
 export const Sidebar = () => {
-  const meshes = useMeshes()
+  const objects = useObjects()
   const ref = useRef<HTMLDivElement>(null)
   const [{ height, width }, setSize] = useState<Size>({
     width: 0,
@@ -48,8 +48,8 @@ export const Sidebar = () => {
       </div>
       <Separator />
       <div ref={ref} className="flex-1 p-2">
-        <MeshTree
-          data={meshes}
+        <ObjectTree
+          data={objects}
           height={height ?? 0}
           width={width ?? 0}
         />

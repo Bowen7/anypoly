@@ -1,18 +1,18 @@
 import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
 import { parsePath, serialize } from 'path-data-parser'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Mesh3D, PathMesh3D } from '@/lib/types'
+import type { PolyObject, PolyPathMesh } from '@/lib/types'
 import { MultipleInputs } from '@/components/multiple-inputs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { useRemoveMesh, useUpdateMesh } from '@/lib'
+import { useRemoveObject, useUpdateObject } from '@/lib'
 import { Checkbox } from '@/components/ui/checkbox'
 import { EditorPanel, EditorPanelGroup, EditorPanelItem } from '@/components/editor-panel'
 
 export type Props = {
-  mesh: Mesh3D
+  object: PolyObject
 }
 
 const LABELS = {
@@ -22,34 +22,33 @@ const LABELS = {
   box: ['width', 'height', 'depth', 'widthSegs', 'heightSegs', 'depthSegs'],
   sphere: ['radius', 'widthSegs', 'heightSegs', 'phiStart', 'phiLen(*PI)', 'thetaStart', 'thetaLen(*PI)'],
   circle: ['radius', 'segs', 'thetaStart', 'thetaLen(*PI)'],
-  // TODO: more args
   cylinder: ['radiusTop', 'radiusBottom', 'height', 'radialSegs', 'heightSegs', 'openEnded', 'thetaStart', 'thetaLen(*PI)'],
   cone: ['radius', 'height', 'radialSegs', 'heightSegs', 'openEnded', 'thetaStart', 'thetaLen(*PI)'],
   plane: ['width', 'height', 'widthSegs', 'heightSegs'],
   path: ['curveSegs', 'steps', 'depth', 'bevelEnabled', 'bThickness', 'bSize', 'bOffset', 'bSegments'],
 }
 
-export const MeshEditor = ({ mesh }: Props) => {
-  const [values, setValues] = useState(mesh)
+export const ObjectEditor = ({ object }: Props) => {
+  const [values, setValues] = useState(object)
   const [dScale, setDScale] = useState(1)
-  const initialValues = useRef(mesh)
-  const updateMesh = useUpdateMesh()
-  const removeMesh = useRemoveMesh()
-  const updateMeshRef = useRef(updateMesh)
-  updateMeshRef.current = updateMesh
+  const initialValues = useRef(object)
+  const updateObject = useUpdateObject()
+  const removeObject = useRemoveObject()
+  const updateObjectRef = useRef(updateObject)
+  updateObjectRef.current = updateObject
 
   useEffect(() => {
     if (initialValues.current !== values) {
-      updateMeshRef.current(values)
+      updateObjectRef.current(values)
     }
   }, [values])
 
-  const onChange = (partial: Partial<Mesh3D>) => {
-    setValues(prev => ({ ...prev, ...partial } as Mesh3D))
+  const onChange = (partial: Partial<PolyObject>) => {
+    setValues(prev => ({ ...prev, ...partial } as PolyObject))
   }
 
   const onScaleClick = () => {
-    const segments = parsePath((values as PathMesh3D).d).map(({ key, data }) => {
+    const segments = parsePath((values as PolyPathMesh).d).map(({ key, data }) => {
       if (key === 'a' || key === 'A') {
         return {
           key,
@@ -81,9 +80,9 @@ export const MeshEditor = ({ mesh }: Props) => {
   return (
     <EditorPanel>
       <EditorPanelGroup>
-        <EditorPanelItem label="Mesh name">
+        <EditorPanelItem label="Object name">
           <Input
-            placeholder="Input your mesh name"
+            placeholder="Input object name"
             value={values.name}
             onChange={(e) => {
               onChange({ name: e.target.value })
@@ -101,7 +100,7 @@ export const MeshEditor = ({ mesh }: Props) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => removeMesh()}
+            onClick={() => removeObject()}
             className="h-7 w-7"
           >
             <TrashIcon />
@@ -176,7 +175,7 @@ export const MeshEditor = ({ mesh }: Props) => {
                 values={values.args}
                 labels={LABELS[values.type]}
                 n={argsN}
-                onChange={values => onChange({ args: values as PathMesh3D['args'] })}
+                onChange={values => onChange({ args: values as PolyPathMesh['args'] })}
               />
             </div>
           </EditorPanelItem>

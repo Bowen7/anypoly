@@ -2,24 +2,24 @@ import { useAtomValue, useSetAtom } from 'jotai'
 import { memo, useCallback, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { SVGLoader } from 'three/addons'
-import { Selection } from './outlines'
-import { focusedIdAtom, focusedMeshAtom } from '@/lib/atom'
-import type { Mesh3D, PathMesh3D, ShapeMesh3D } from '@/lib/types'
+import { BoundingBox } from './bounding-box'
+import { focusedIdAtom, focusedObjectAtom } from '@/lib/atom'
+import type { PolyMesh, PolyObject } from '@/lib/types'
 
-type UnifiedMeshProps = {
-  mesh: PathMesh3D | ShapeMesh3D
+type MeshProps = {
+  mesh: PolyMesh
   rotation: [number, number, number]
   isSelected: boolean
 }
-const UnifiedMesh = memo((props: UnifiedMeshProps) => {
+const Mesh = memo((props: MeshProps) => {
   const { mesh, rotation, isSelected } = props
   const { position, scale, visible, type, args, color } = mesh
-  const setFocusedMesh = useSetAtom(focusedMeshAtom)
+  const setFocusedObject = useSetAtom(focusedObjectAtom)
   const [isHovered, setIsHovered] = useState(false)
 
   const onClick = useCallback(() => {
-    setFocusedMesh(mesh)
-  }, [mesh, setFocusedMesh])
+    setFocusedObject(mesh)
+  }, [mesh, setFocusedObject])
 
   const d = type === 'path' ? mesh.d : ''
   const extrude = type === 'path' ? mesh.extrude : false
@@ -64,6 +64,9 @@ const UnifiedMesh = memo((props: UnifiedMeshProps) => {
 
   const deps = useMemo(() => [position, scale, rotation, args, extrude], [position, scale, rotation, args, extrude])
 
+  const focusBoxEnabled = visible && isSelected
+  const hoverBoxEnabled = visible && !isSelected && isHovered
+
   return (
     <mesh
       position={position}
@@ -76,27 +79,27 @@ const UnifiedMesh = memo((props: UnifiedMeshProps) => {
       onPointerOut={() => setIsHovered(false)}
     >
       <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-      {isSelected && visible && (
-        <Selection
+      {focusBoxEnabled && (
+        <BoundingBox
           deps={deps}
-          color="#f472b6"
+          type="focus"
         />
       )}
-      {!isSelected && isHovered && visible && (
-        <Selection
+      {hoverBoxEnabled && (
+        <BoundingBox
           deps={deps}
-          color="#60a5fa"
+          type="hover"
         />
       )}
     </mesh>
   )
 })
 
-type MeshProps = {
-  mesh: Mesh3D
+type ObjectProps = {
+  object: PolyObject
 }
-export const Mesh = ({ mesh }: MeshProps) => {
-  const { id, type, position, rotation: [rx, ry, rz], scale, visible } = mesh
+export const Object = ({ object }: ObjectProps) => {
+  const { id, type, position, rotation: [rx, ry, rz], scale, visible } = object
   const focusedId = useAtomValue(focusedIdAtom)
   const isSelected = id === focusedId
 
@@ -106,6 +109,7 @@ export const Mesh = ({ mesh }: MeshProps) => {
   const deps = useMemo(() => [position, scale, rotation], [position, scale, rotation])
 
   if (type === 'group') {
+    const focusBoxEnabled = visible && isSelected
     return (
       <group
         position={position}
@@ -113,17 +117,17 @@ export const Mesh = ({ mesh }: MeshProps) => {
         scale={scale}
         visible={visible}
       >
-        {mesh.children.map(child => (
-          <Mesh key={child.id} mesh={child} />
+        {object.children.map(child => (
+          <Object key={child.id} object={child} />
         ))}
-        {isSelected && visible && (
-          <Selection
+        {focusBoxEnabled && (
+          <BoundingBox
             deps={deps}
-            color="#f472b6"
+            type="focus"
           />
         )}
       </group>
     )
   }
-  return <UnifiedMesh mesh={mesh} rotation={rotation} isSelected={isSelected} />
+  return <Mesh mesh={object} rotation={rotation} isSelected={isSelected} />
 }

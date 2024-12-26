@@ -1,17 +1,14 @@
 import { memo, useLayoutEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
-import { useAtomValue, useSetAtom } from 'jotai'
-import { createPortal } from '@react-three/fiber'
 import { Edges } from '@react-three/drei'
-import { outlinesTargetAtom } from '@/lib/atom'
+import { Portal } from '@/components/portal'
 
-type SelectionProps = {
+type BoundingBoxProps = {
+  type: 'focus' | 'hover'
   deps: any[]
-  color: string
 }
-export const Selection = memo(({ color, deps }: SelectionProps) => {
+export const BoundingBox = memo(({ type, deps }: BoundingBoxProps) => {
   const ref = useRef<THREE.Object3D>(null)
-  const target = useAtomValue(outlinesTargetAtom)
   const [position, setPosition] = useState<THREE.Vector3>(new THREE.Vector3())
   const [geometry, setGeometry] = useState<THREE.BoxGeometry | null>(null)
 
@@ -20,7 +17,7 @@ export const Selection = memo(({ color, deps }: SelectionProps) => {
       return
     }
     const box = new THREE.Box3().setFromObject(ref.current.parent)
-    const dimensions = new THREE.Vector3().subVectors(box.max, box.min)
+    const dimensions = new THREE.Vector3().subVectors(box.max, box.min).add(new THREE.Vector3(0.1, 0.1, 0.1))
     const position = box.getCenter(new THREE.Vector3())
     setGeometry(new THREE.BoxGeometry(dimensions.x, dimensions.y, dimensions.z))
     setPosition(position)
@@ -30,36 +27,17 @@ export const Selection = memo(({ color, deps }: SelectionProps) => {
   return (
     <>
       <object3D ref={ref} />
-      {target && geometry && createPortal(
-        (
+      <Portal>
+        {geometry && (
           <Edges
-            color={color}
-            scale={1.1}
+            color={type === 'focus' ? '#f472b6' : '#60a5fa'}
             geometry={geometry}
             position={position}
           >
-            <meshBasicMaterial color={color} />
+            <meshBasicMaterial />
           </Edges>
-        ),
-        target,
-      )}
+        )}
+      </Portal>
     </>
-  )
-})
-
-export const Outlines = memo(() => {
-  const ref = useRef<THREE.Object3D>(null)
-  const setTarget = useSetAtom(outlinesTargetAtom)
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return
-    }
-    setTarget(ref.current)
-    return () => {
-      setTarget(null)
-    }
-  }, [setTarget])
-  return (
-    <object3D ref={ref} />
   )
 })
