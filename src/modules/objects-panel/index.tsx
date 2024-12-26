@@ -2,8 +2,8 @@ import { useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { SidebarSimple as SidebarIcon } from '@phosphor-icons/react'
 import { useSetAtom } from 'jotai'
+import { ObjectTree } from './object-tree'
 import { Separator } from '@/components/ui/separator'
-import { ObjectTree } from '@/components/object-tree'
 import { minimizedAtom, useObjects } from '@/lib'
 import { LogoMenu } from '@/components/logo-menu'
 import { DesignCombo } from '@/components/design-combo'
@@ -14,7 +14,7 @@ type Size = {
   height?: number
 }
 
-export const Sidebar = () => {
+export const ObjectsPanel = () => {
   const objects = useObjects()
   const ref = useRef<HTMLDivElement>(null)
   const [{ height, width }, setSize] = useState<Size>({

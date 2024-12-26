@@ -2,7 +2,7 @@ import { Tree } from 'react-arborist'
 import { useSetAtom } from 'jotai'
 import { useHover } from 'usehooks-ts'
 import { useCallback, useEffect, useRef } from 'react'
-import { Node } from './node'
+import { ObjectNode } from './object-node'
 import type { PolyObject } from '@/lib/types'
 import { focusedObjectAtom, isObjectTreeHoverAtom, useMoveObject, useRemoveObject } from '@/lib'
 
@@ -52,7 +52,7 @@ export const ObjectTree = ({ data, width, height }: Props) => {
         rowHeight={28}
         indent={16}
       >
-        {Node}
+        {ObjectNode}
       </Tree>
     </div>
   )

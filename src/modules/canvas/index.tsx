@@ -4,9 +4,9 @@ import { Canvas as ThreeCanvas } from '@react-three/fiber'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { useSetAtom } from 'jotai'
-import { FloatBar } from './float-bar'
+import { ToolBelt } from './tool-belt'
+import { Object } from './object'
 import { sceneRefAtom, useObjects } from '@/lib'
-import { Object } from '@/components/object'
 import { PortalTarget } from '@/components/portal'
 
 type Size = {
@@ -71,7 +71,7 @@ export const Canvas = () => {
         <axesHelper ref={axesRef} args={[10]} />
         <OrbitControls makeDefault />
       </ThreeCanvas>
-      <FloatBar />
+      <ToolBelt />
     </div>
   )
 }

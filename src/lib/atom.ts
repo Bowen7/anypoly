@@ -1,4 +1,4 @@
-import { atom } from 'jotai'
+import { atom, createStore } from 'jotai'
 import type * as THREE from 'three'
 import { atomWithImmer } from 'jotai-immer'
 import type React from 'react'
@@ -22,3 +22,5 @@ export const focusedIdAtom = atom(get => get(focusedObjectAtom)?.id ?? '')
 export const sceneRefAtom = atom<React.MutableRefObject<THREE.Scene | null> | null>(null)
 
 export const portalTargetAtom = atom<THREE.Object3D | null>(null)
+
+export const store = createStore()

@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { useCreateObject, useDesign } from '@/lib'
 
-export const FloatBar = () => {
+export const ToolBelt = () => {
   const design = useDesign()
   const createObject = useCreateObject()
   return (

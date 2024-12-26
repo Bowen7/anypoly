@@ -2,7 +2,7 @@ import { useCallback } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import type { PolyObject } from './types'
-import { focusedIdAtom, focusedObjectAtom, objectsAtom } from './atom'
+import { focusedIdAtom, focusedObjectAtom, objectsAtom, store } from './atom'
 
 export const useObjects = () => useAtomValue(objectsAtom)
 export const useFocusedObject = () => useAtomValue(focusedObjectAtom)
@@ -43,20 +43,23 @@ export const useRemoveObject = () => {
 
 export const useUpdateObject = () => {
   const focusedId = useAtomValue(focusedIdAtom)
-  const [focusedObject, setFocusedObject] = useAtom(focusedObjectAtom)
+  const setFocusedObject = useSetAtom(focusedObjectAtom)
   const setObjects = useSetAtom(objectsAtom)
-  return useCallback(async (partial: Partial<PolyObject>) => {
+  return useCallback(async (partial: Partial<PolyObject>, immediate = true) => {
+    const focusedObject = store.get(focusedObjectAtom)
     if (!focusedObject) {
       return
     }
     const object = { ...focusedObject, ...partial } as PolyObject
     setFocusedObject(object)
-    setObjects((draft) => {
-      visitObjects(draft, focusedId, (collection, index) => {
-        collection[index] = object
+    if (immediate) {
+      setObjects((draft) => {
+        visitObjects(draft, focusedId, (collection, index) => {
+          collection[index] = object
+        })
       })
-    })
-  }, [focusedId, focusedObject, setFocusedObject, setObjects])
+    }
+  }, [focusedId, setFocusedObject, setObjects])
 }
 
 export const useSetObjectVisible = () => {

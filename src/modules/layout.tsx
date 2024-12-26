@@ -1,7 +1,7 @@
 import { useWindowSize } from 'usehooks-ts'
 import { useAtomValue } from 'jotai'
-import { Sidebar } from './sidebar'
-import { Editor } from './editor'
+import { ObjectsPanel } from './objects-panel'
+import { PropertiesPanel } from './properties-panel'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             minSize={minSideSize}
             defaultSize={minSideSize}
           >
-            <Sidebar />
+            <ObjectsPanel />
           </ResizablePanel>
           <ResizableHandle />
         </>
@@ -51,7 +51,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             maxSize={maxSideSize}
             defaultSize={minSideSize}
           >
-            <Editor />
+            <PropertiesPanel />
           </ResizablePanel>
         </>
       )}

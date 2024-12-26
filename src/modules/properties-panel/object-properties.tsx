@@ -1,6 +1,7 @@
 import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@phosphor-icons/react'
 import { parsePath, serialize } from 'path-data-parser'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { PropertiesGroup, PropertiesPanel, PropertyItem } from './property'
 import type { PolyObject, PolyPathMesh } from '@/lib/types'
 import { MultipleInputs } from '@/components/multiple-inputs'
 import { Button } from '@/components/ui/button'
@@ -9,7 +10,6 @@ import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
 import { useRemoveObject, useUpdateObject } from '@/lib'
 import { Checkbox } from '@/components/ui/checkbox'
-import { EditorPanel, EditorPanelGroup, EditorPanelItem } from '@/components/editor-panel'
 
 export type Props = {
   object: PolyObject
@@ -28,27 +28,13 @@ const LABELS = {
   path: ['curveSegs', 'steps', 'depth', 'bevelEnabled', 'bThickness', 'bSize', 'bOffset', 'bSegments'],
 }
 
-export const ObjectEditor = ({ object }: Props) => {
-  const [values, setValues] = useState(object)
+export const ObjectProperties = ({ object }: Props) => {
   const [dScale, setDScale] = useState(1)
-  const initialValues = useRef(object)
   const updateObject = useUpdateObject()
   const removeObject = useRemoveObject()
-  const updateObjectRef = useRef(updateObject)
-  updateObjectRef.current = updateObject
-
-  useEffect(() => {
-    if (initialValues.current !== values) {
-      updateObjectRef.current(values)
-    }
-  }, [values])
-
-  const onChange = (partial: Partial<PolyObject>) => {
-    setValues(prev => ({ ...prev, ...partial } as PolyObject))
-  }
 
   const onScaleClick = () => {
-    const segments = parsePath((values as PolyPathMesh).d).map(({ key, data }) => {
+    const segments = parsePath((object as PolyPathMesh).d).map(({ key, data }) => {
       if (key === 'a' || key === 'A') {
         return {
           key,
@@ -61,41 +47,41 @@ export const ObjectEditor = ({ object }: Props) => {
       }
     })
     const d = serialize(segments)
-    onChange({ d })
+    updateObject({ d })
     setDScale(1)
   }
 
   const argsN = useMemo(() => {
-    if (values.type === 'group') {
+    if (object.type === 'group') {
       return 0
     }
-    if (values.type === 'path') {
-      if (!values.extrude) {
+    if (object.type === 'path') {
+      if (!object.extrude) {
         return 1
       }
     }
-    return values.args.length
-  }, [values])
+    return object.args.length
+  }, [object])
 
   return (
-    <EditorPanel>
-      <EditorPanelGroup>
-        <EditorPanelItem label="Object name">
+    <PropertiesPanel>
+      <PropertiesGroup>
+        <PropertyItem label="Object name">
           <Input
             placeholder="Input object name"
-            value={values.name}
+            value={object.name}
             onChange={(e) => {
-              onChange({ name: e.target.value })
+              updateObject({ name: e.target.value })
             }}
             className="w-36 h-7"
           />
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onChange({ visible: !values.visible })}
+            onClick={() => updateObject({ visible: !object.visible })}
             className="h-7 w-7"
           >
-            {values.visible ? <EyeIcon /> : <EyeSlashIcon />}
+            {object.visible ? <EyeIcon /> : <EyeSlashIcon />}
           </Button>
           <Button
             variant="ghost"
@@ -105,38 +91,38 @@ export const ObjectEditor = ({ object }: Props) => {
           >
             <TrashIcon />
           </Button>
-        </EditorPanelItem>
-      </EditorPanelGroup>
+        </PropertyItem>
+      </PropertiesGroup>
       <Separator />
-      <EditorPanelGroup>
-        <EditorPanelItem label="Position">
+      <PropertiesGroup>
+        <PropertyItem label="Position">
           <MultipleInputs
-            values={values.position}
+            values={object.position}
             labels={LABELS.position}
-            onChange={values => onChange({ position: values as [number, number, number] })}
+            onChange={values => updateObject({ position: values as [number, number, number] })}
           />
-        </EditorPanelItem>
-        <EditorPanelItem label="Rotation (deg)">
+        </PropertyItem>
+        <PropertyItem label="Rotation (deg)">
           <MultipleInputs
-            values={values.rotation}
+            values={object.rotation}
             labels={LABELS.rotation}
-            onChange={values => onChange({ rotation: values as [number, number, number] })}
+            onChange={values => updateObject({ rotation: values as [number, number, number] })}
           />
-        </EditorPanelItem>
-        <EditorPanelItem label="Scale">
+        </PropertyItem>
+        <PropertyItem label="Scale">
           <MultipleInputs
-            values={values.scale}
+            values={object.scale}
             labels={LABELS.scale}
-            onChange={values => onChange({ scale: values as [number, number, number] })}
+            onChange={values => updateObject({ scale: values as [number, number, number] })}
           />
-        </EditorPanelItem>
-        {values.type === 'path' && (
-          <EditorPanelItem label="D">
+        </PropertyItem>
+        {object.type === 'path' && (
+          <PropertyItem label="D">
             <div className="flex-1">
               <Textarea
-                value={values.d}
+                value={object.d}
                 onChange={(e) => {
-                  onChange({ d: e.target.value })
+                  updateObject({ d: e.target.value })
                 }}
               />
               <div className="mt-2 flex gap-2 items-center">
@@ -149,18 +135,18 @@ export const ObjectEditor = ({ object }: Props) => {
                 <Button onClick={onScaleClick} className="h-7" variant="outline">Scale d</Button>
               </div>
             </div>
-          </EditorPanelItem>
+          </PropertyItem>
         )}
-        {values.type !== 'group' && (
-          <EditorPanelItem label="Args">
+        {object.type !== 'group' && (
+          <PropertyItem label="Args">
             <div className="flex flex-col gap-2">
-              {values.type === 'path' && (
+              {object.type === 'path' && (
                 <div className="flex flex-row gap-2 items-center">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="extrude"
-                      checked={values.extrude}
-                      onCheckedChange={checked => onChange({ extrude: checked as boolean })}
+                      checked={object.extrude}
+                      onCheckedChange={checked => updateObject({ extrude: checked as boolean })}
                     />
                     <label
                       htmlFor="extrude"
@@ -172,32 +158,32 @@ export const ObjectEditor = ({ object }: Props) => {
                 </div>
               )}
               <MultipleInputs
-                values={values.args}
-                labels={LABELS[values.type]}
+                values={object.args}
+                labels={LABELS[object.type]}
                 n={argsN}
-                onChange={values => onChange({ args: values as PolyPathMesh['args'] })}
+                onChange={values => updateObject({ args: values as PolyPathMesh['args'] })}
               />
             </div>
-          </EditorPanelItem>
+          </PropertyItem>
         )}
-      </EditorPanelGroup>
-      {values.type !== 'group' && (
+      </PropertiesGroup>
+      {object.type !== 'group' && (
         <>
           <Separator />
-          <EditorPanelGroup>
-            <EditorPanelItem label="Material Color">
-              <span className="w-2 h-2 rounded-full" style={{ background: values.color }}></span>
+          <PropertiesGroup>
+            <PropertyItem label="Material Color">
+              <span className="w-2 h-2 rounded-full" style={{ background: object.color }}></span>
               <Input
-                value={values.color}
+                value={object.color}
                 onChange={(e) => {
-                  onChange({ color: e.target.value })
+                  updateObject({ color: e.target.value })
                 }}
                 className="w-36 h-7"
               />
-            </EditorPanelItem>
-          </EditorPanelGroup>
+            </PropertyItem>
+          </PropertiesGroup>
         </>
       )}
-    </EditorPanel>
+    </PropertiesPanel>
   )
 }

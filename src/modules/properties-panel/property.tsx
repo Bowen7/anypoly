@@ -1,9 +1,9 @@
 import { Label } from '@/components/ui/label'
 
-type EditorPanelProps = {
+type PropertiesPanelProps = {
   children: React.ReactNode
 }
-export const EditorPanel = ({ children }: EditorPanelProps) => {
+export const PropertiesPanel = ({ children }: PropertiesPanelProps) => {
   return (
     <div className="flex flex-col gap-2">
       {children}
@@ -11,19 +11,19 @@ export const EditorPanel = ({ children }: EditorPanelProps) => {
   )
 }
 
-type EditorPanelGroupProps = {
+type PropertiesGroupProps = {
   children: React.ReactNode
   className?: string
 }
-export const EditorPanelGroup = ({ children }: EditorPanelGroupProps) => {
+export const PropertiesGroup = ({ children }: PropertiesGroupProps) => {
   return <div className="px-3 py-2 flex flex-col gap-4">{children}</div>
 }
 
-type EditorPanelItemProps = {
+type PropertyItemProps = {
   children: React.ReactNode
   label: string
 }
-export const EditorPanelItem = ({ children, label }: EditorPanelItemProps) => {
+export const PropertyItem = ({ children, label }: PropertyItemProps) => {
   return (
     <div className="flex flex-col gap-1.5">
       <Label>{label}</Label>

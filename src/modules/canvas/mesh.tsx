@@ -1,19 +1,22 @@
-import { useAtomValue, useSetAtom } from 'jotai'
-import { memo, useCallback, useMemo, useState } from 'react'
+import { useSetAtom } from 'jotai'
+import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { SVGLoader } from 'three/addons'
+import { PivotControls } from '@react-three/drei'
 import { BoundingBox } from './bounding-box'
-import { focusedIdAtom, focusedObjectAtom } from '@/lib/atom'
-import type { PolyMesh, PolyObject } from '@/lib/types'
+import { Controls } from './controls'
+import { focusedObjectAtom } from '@/lib/atom'
+import type { PolyMesh } from '@/lib/types'
 
-type MeshProps = {
+type Props = {
   mesh: PolyMesh
   rotation: [number, number, number]
   isSelected: boolean
 }
-const Mesh = memo((props: MeshProps) => {
+export const Mesh = memo((props: Props) => {
   const { mesh, rotation, isSelected } = props
   const { position, scale, visible, type, args, color } = mesh
+  const ref = useRef<THREE.Mesh>(null)
   const setFocusedObject = useSetAtom(focusedObjectAtom)
   const [isHovered, setIsHovered] = useState(false)
 
@@ -66,68 +69,33 @@ const Mesh = memo((props: MeshProps) => {
 
   const focusBoxEnabled = visible && isSelected
   const hoverBoxEnabled = visible && !isSelected && isHovered
-
+  console.log(2222)
   return (
     <mesh
+      // ref={ref}
       position={position}
       rotation={rotation}
       scale={scale}
       visible={visible}
       geometry={geometry}
       onClick={onClick}
-      onPointerOver={() => setIsHovered(true)}
-      onPointerOut={() => setIsHovered(false)}
     >
       <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-      {focusBoxEnabled && (
+      {/* {focusBoxEnabled && (
         <BoundingBox
+          target={ref}
           deps={deps}
           type="focus"
         />
       )}
       {hoverBoxEnabled && (
         <BoundingBox
+          target={ref}
           deps={deps}
           type="hover"
         />
-      )}
+      )} */}
+      <Controls enabled={focusBoxEnabled} scale={1.5} />
     </mesh>
   )
 })
-
-type ObjectProps = {
-  object: PolyObject
-}
-export const Object = ({ object }: ObjectProps) => {
-  const { id, type, position, rotation: [rx, ry, rz], scale, visible } = object
-  const focusedId = useAtomValue(focusedIdAtom)
-  const isSelected = id === focusedId
-
-  const rotation = useMemo<[number, number, number]>(() => {
-    return [rx / 180 * Math.PI, ry / 180 * Math.PI, rz / 180 * Math.PI]
-  }, [rx, ry, rz])
-  const deps = useMemo(() => [position, scale, rotation], [position, scale, rotation])
-
-  if (type === 'group') {
-    const focusBoxEnabled = visible && isSelected
-    return (
-      <group
-        position={position}
-        rotation={rotation}
-        scale={scale}
-        visible={visible}
-      >
-        {object.children.map(child => (
-          <Object key={child.id} object={child} />
-        ))}
-        {focusBoxEnabled && (
-          <BoundingBox
-            deps={deps}
-            type="focus"
-          />
-        )}
-      </group>
-    )
-  }
-  return <Mesh mesh={object} rotation={rotation} isSelected={isSelected} />
-}

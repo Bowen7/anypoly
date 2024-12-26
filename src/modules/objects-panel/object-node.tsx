@@ -17,7 +17,7 @@ import clsx from 'clsx'
 import { focusedIdAtom, focusedObjectAtom, isObjectTreeHoverAtom, useSetObjectVisible } from '@/lib'
 import type { PolyObject } from '@/lib/types'
 
-export const Node = memo((props: NodeRendererProps<PolyObject>) => {
+export const ObjectNode = memo((props: NodeRendererProps<PolyObject>) => {
   const { node, style, dragHandle } = props
   const { data, isLeaf, isOpen } = node
   const { visible } = data

@@ -1,4 +1,5 @@
-import { ObjectEditor } from './object-editor'
+import { ObjectProperties } from './object-properties'
+import { GlobalProperties } from './global-properties'
 import {
   Tabs,
   TabsContent,
@@ -8,7 +9,7 @@ import {
 import { useFocusedObject } from '@/lib'
 import { Separator } from '@/components/ui/separator'
 
-export const Editor = () => {
+export const PropertiesPanel = () => {
   const object = useFocusedObject()
   return (
     <Tabs defaultValue="object" className="h-full flex flex-col">
@@ -18,10 +19,10 @@ export const Editor = () => {
       </TabsList>
       <Separator />
       <TabsContent value="object" className="flex-1">
-        {object && <ObjectEditor object={object} key={object.id} />}
+        {object && <ObjectProperties object={object} />}
       </TabsContent>
       <TabsContent value="global">
-        TODO
+        <GlobalProperties />
       </TabsContent>
     </Tabs>
   )

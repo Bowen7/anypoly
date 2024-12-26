@@ -4,19 +4,19 @@ import { Edges } from '@react-three/drei'
 import { Portal } from '@/components/portal'
 
 type BoundingBoxProps = {
+  target: React.RefObject<THREE.Object3D>
   type: 'focus' | 'hover'
   deps: any[]
 }
-export const BoundingBox = memo(({ type, deps }: BoundingBoxProps) => {
-  const ref = useRef<THREE.Object3D>(null)
+export const BoundingBox = memo(({ target, type, deps }: BoundingBoxProps) => {
   const [position, setPosition] = useState<THREE.Vector3>(new THREE.Vector3())
   const [geometry, setGeometry] = useState<THREE.BoxGeometry | null>(null)
 
   useLayoutEffect(() => {
-    if (!ref.current || !ref.current.parent) {
+    if (!target.current || !target.current.parent) {
       return
     }
-    const box = new THREE.Box3().setFromObject(ref.current.parent)
+    const box = new THREE.Box3().setFromObject(target.current.parent)
     const dimensions = new THREE.Vector3().subVectors(box.max, box.min).add(new THREE.Vector3(0.1, 0.1, 0.1))
     const position = box.getCenter(new THREE.Vector3())
     setGeometry(new THREE.BoxGeometry(dimensions.x, dimensions.y, dimensions.z))
@@ -25,19 +25,16 @@ export const BoundingBox = memo(({ type, deps }: BoundingBoxProps) => {
   }, deps)
 
   return (
-    <>
-      <object3D ref={ref} />
-      <Portal>
-        {geometry && (
-          <Edges
-            color={type === 'focus' ? '#f472b6' : '#60a5fa'}
-            geometry={geometry}
-            position={position}
-          >
-            <meshBasicMaterial />
-          </Edges>
-        )}
-      </Portal>
-    </>
+    <Portal>
+      {geometry && (
+        <Edges
+          color={type === 'focus' ? '#f472b6' : '#60a5fa'}
+          geometry={geometry}
+          position={position}
+        >
+          <meshBasicMaterial />
+        </Edges>
+      )}
+    </Portal>
   )
 })
