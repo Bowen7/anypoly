@@ -26,3 +26,10 @@ export const degToRadianN3 = (deg: N3): N3 => {
   const [x, y, z] = deg
   return [x * Math.PI / 180, y * Math.PI / 180, z * Math.PI / 180] as N3
 }
+
+const toFixedNumber = (n: number) => Math.round(n * 1e3) / 1e3
+
+export const toFixedN3 = (n: N3): N3 => {
+  const [x, y, z] = n
+  return [toFixedNumber(x), toFixedNumber(y), toFixedNumber(z)] as N3
+}

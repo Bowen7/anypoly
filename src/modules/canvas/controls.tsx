@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { PivotControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useUpdateObject } from '@/lib'
 import type { N3 } from '@/lib/types'
-import { quatToDegN3, v3ToN3 } from '@/lib/utils'
+import { quatToDegN3, toFixedN3, v3ToN3 } from '@/lib/utils'
 
 type Props = {
   position: N3
@@ -12,6 +12,11 @@ type Props = {
 }
 export const Controls = ({ position, rotation, scale }: Props) => {
   const updateObject = useUpdateObject()
+  const transformRef = useRef<{
+    position: N3
+    rotation: N3
+    scale: N3
+  } | null>(null)
 
   const matrix = useMemo(() => {
     const matrix = new THREE.Matrix4()
@@ -26,10 +31,23 @@ export const Controls = ({ position, rotation, scale }: Props) => {
     const quaternion = new THREE.Quaternion()
     const scale = new THREE.Vector3()
     local.decompose(position, quaternion, scale)
-    updateObject({ position: v3ToN3(position), rotation: quatToDegN3(quaternion), scale: v3ToN3(scale) }, false)
+    transformRef.current = {
+      position: v3ToN3(position),
+      rotation: quatToDegN3(quaternion),
+      scale: v3ToN3(scale),
+    }
+    updateObject(transformRef.current, false)
   }
   const onDragEnd = () => {
-    updateObject({})
+    if (transformRef.current) {
+      const { position, rotation, scale } = transformRef.current
+      updateObject({
+        position: toFixedN3(position),
+        rotation: toFixedN3(rotation),
+        scale: toFixedN3(scale),
+      })
+    }
+    transformRef.current = null
   }
   return (
     <PivotControls

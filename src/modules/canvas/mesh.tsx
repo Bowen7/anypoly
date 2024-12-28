@@ -21,8 +21,10 @@ export const Mesh = memo((props: Props) => {
   const [isHovered, setIsHovered] = useState(false)
 
   const onClick = useCallback(() => {
-    setFocusedObject(mesh)
-  }, [mesh, setFocusedObject])
+    if (!isFocused) {
+      setFocusedObject(mesh)
+    }
+  }, [mesh, setFocusedObject, isFocused])
 
   const extrude = type === 'path' ? mesh.extrude : false
 
@@ -62,7 +64,13 @@ export const Mesh = memo((props: Props) => {
           />
         )}
       </mesh>
-      {isFocused && <Controls position={position} rotation={rotation} scale={scale} />}
+      {isFocused && (
+        <Controls
+          position={position}
+          rotation={rotation}
+          scale={scale}
+        />
+      )}
     </>
   )
 })
