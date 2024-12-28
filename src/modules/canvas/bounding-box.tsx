@@ -1,4 +1,4 @@
-import { memo, useLayoutEffect, useRef, useState } from 'react'
+import { memo, useLayoutEffect, useState } from 'react'
 import * as THREE from 'three'
 import { Edges } from '@react-three/drei'
 import { Portal } from '@/components/portal'
@@ -6,9 +6,10 @@ import { Portal } from '@/components/portal'
 type BoundingBoxProps = {
   target: React.RefObject<THREE.Object3D>
   type: 'focus' | 'hover'
+  visible: boolean
   deps: any[]
 }
-export const BoundingBox = memo(({ target, type, deps }: BoundingBoxProps) => {
+export const BoundingBox = memo(({ target, type, visible, deps }: BoundingBoxProps) => {
   const [position, setPosition] = useState<THREE.Vector3>(new THREE.Vector3())
   const [geometry, setGeometry] = useState<THREE.BoxGeometry | null>(null)
 
@@ -31,6 +32,7 @@ export const BoundingBox = memo(({ target, type, deps }: BoundingBoxProps) => {
           color={type === 'focus' ? '#f472b6' : '#60a5fa'}
           geometry={geometry}
           position={position}
+          visible={visible}
         >
           <meshBasicMaterial />
         </Edges>

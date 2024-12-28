@@ -1,53 +1,44 @@
-import type { ComponentPropsWithoutRef } from 'react'
-import { useRef } from 'react'
+import { useMemo } from 'react'
 import { PivotControls } from '@react-three/drei'
 import * as THREE from 'three'
-import { useFocusedObject, useUpdateObject } from '@/lib'
-import type { Number3 } from '@/lib/types'
+import { useUpdateObject } from '@/lib'
+import type { N3 } from '@/lib/types'
+import { quatToDegN3, v3ToN3 } from '@/lib/utils'
 
-const add = (a: THREE.Vector3, b: Number3): Number3 => {
-  return [a.x + b[0], a.y + b[1], a.z + b[2]]
+type Props = {
+  position: N3
+  rotation: N3
+  scale: N3
 }
-
-type Props = ComponentPropsWithoutRef<typeof PivotControls>
-export const Controls = (props: Props) => {
-  const object = useFocusedObject()
+export const Controls = ({ position, rotation, scale }: Props) => {
   const updateObject = useUpdateObject()
-  const initialTransform = useRef<{ position: Number3, rotation: Number3, scale: Number3 } | null>(null)
-  const onDragStart = () => {
-    if (!object) {
-      return
-    }
-    initialTransform.current = {
-      position: object.position,
-      rotation: object.rotation,
-      scale: object.scale,
-    }
-  }
+
+  const matrix = useMemo(() => {
+    const matrix = new THREE.Matrix4()
+    const euler = new THREE.Euler(...rotation)
+    const quaternion = new THREE.Quaternion().setFromEuler(euler)
+    matrix.compose(new THREE.Vector3(...position), quaternion, new THREE.Vector3(...scale))
+    return matrix
+  }, [position, rotation, scale])
+
   const onDrag = (local: THREE.Matrix4) => {
-    if (!initialTransform.current) {
-      return
-    }
     const position = new THREE.Vector3()
     const quaternion = new THREE.Quaternion()
     const scale = new THREE.Vector3()
     local.decompose(position, quaternion, scale)
-    const rotation = new THREE.Euler().setFromQuaternion(quaternion)
-    updateObject({ position: add(position, initialTransform.current.position) }, false)
+    updateObject({ position: v3ToN3(position), rotation: quatToDegN3(quaternion), scale: v3ToN3(scale) }, false)
   }
   const onDragEnd = () => {
-    console.log(456)
-    initialTransform.current = null
     updateObject({})
   }
   return (
     <PivotControls
+      matrix={matrix}
       depthTest={false}
+      scale={1.5}
       annotations
-      onDragStart={onDragStart}
       onDrag={onDrag}
       onDragEnd={onDragEnd}
-      {...props}
     />
   )
 }

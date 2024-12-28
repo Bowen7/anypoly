@@ -1,10 +1,10 @@
-export type Number3 = [number, number, number]
+export type N3 = [number, number, number]
 export type BaseObject = {
   id: string
   name: string
-  position: Number3
-  rotation: Number3
-  scale: Number3
+  position: N3
+  rotation: N3
+  scale: N3
   visible: boolean
 }
 

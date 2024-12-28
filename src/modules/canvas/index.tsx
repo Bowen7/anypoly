@@ -6,7 +6,7 @@ import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { useSetAtom } from 'jotai'
 import { ToolBelt } from './tool-belt'
 import { Object } from './object'
-import { sceneRefAtom, useObjects } from '@/lib'
+import { exportTargetAtom, useObjects } from '@/lib'
 import { PortalTarget } from '@/components/portal'
 
 type Size = {
@@ -19,7 +19,7 @@ export const Canvas = () => {
   const ref = useRef<HTMLDivElement>(null)
   const sceneRef = useRef<Scene>(null)
   const axesRef = useRef<AxesHelper>(null)
-  const setSceneRef = useSetAtom(sceneRefAtom)
+  const setExportTarget = useSetAtom(exportTargetAtom)
 
   const [{ width, height }, setSize] = useState<Size>({
     width: 0,
@@ -34,8 +34,8 @@ export const Canvas = () => {
   })
 
   useEffect(() => {
-    setSceneRef(sceneRef)
-  }, [setSceneRef])
+    setExportTarget(sceneRef.current)
+  }, [setExportTarget])
 
   useEffect(() => {
     axesRef.current?.setColors('#facc15', '#4ade80', '#60a5fa')

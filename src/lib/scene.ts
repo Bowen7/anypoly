@@ -1,5 +1,5 @@
-import { useCallback } from 'react'
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useCallback, useMemo } from 'react'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import { nanoid } from 'nanoid'
 import type { PolyObject } from './types'
 import { focusedIdAtom, focusedObjectAtom, objectsAtom, store } from './atom'
@@ -42,7 +42,6 @@ export const useRemoveObject = () => {
 }
 
 export const useUpdateObject = () => {
-  const focusedId = useAtomValue(focusedIdAtom)
   const setFocusedObject = useSetAtom(focusedObjectAtom)
   const setObjects = useSetAtom(objectsAtom)
   return useCallback(async (partial: Partial<PolyObject>, immediate = true) => {
@@ -54,23 +53,30 @@ export const useUpdateObject = () => {
     setFocusedObject(object)
     if (immediate) {
       setObjects((draft) => {
+        const focusedId = store.get(focusedIdAtom)
         visitObjects(draft, focusedId, (collection, index) => {
           collection[index] = object
         })
       })
     }
-  }, [focusedId, setFocusedObject, setObjects])
+  }, [setFocusedObject, setObjects])
 }
 
 export const useSetObjectVisible = () => {
   const setObjects = useSetAtom(objectsAtom)
+  const updateObject = useUpdateObject()
   return useCallback(async (id: string, visible: boolean) => {
-    setObjects((draft) => {
-      visitObjects(draft, id, (collection, index) => {
-        collection[index].visible = visible
+    const focusedId = store.get(focusedIdAtom)
+    if (focusedId === id) {
+      updateObject({ visible })
+    } else {
+      setObjects((draft) => {
+        visitObjects(draft, id, (collection, index) => {
+          collection[index].visible = visible
+        })
       })
-    })
-  }, [setObjects])
+    }
+  }, [updateObject, setObjects])
 }
 
 export const createObject = (type: PolyObject['type']): PolyObject => {
@@ -194,4 +200,10 @@ export const useMoveObject = () => {
       })
     })
   }, [setObjects])
+}
+
+// If the object is focused, return the object from the atom, otherwise return the object passed in
+export const useLatestObject = (object: PolyObject, isFocused: boolean) => {
+  const objectFromAtom = useAtomValue(useMemo(() => isFocused ? atom(get => get(focusedObjectAtom)) : atom(null), [isFocused]))
+  return objectFromAtom || object
 }

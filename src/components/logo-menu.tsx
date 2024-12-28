@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
-import { db, isCreatingAtom, isEmptyAtom, isRenamingAtom, sceneRefAtom, useDesign, useDesigns, useRemoveDesign, useSwitchDesign } from '@/lib'
+import { db, exportTargetAtom, isCreatingAtom, isEmptyAtom, isRenamingAtom, useDesign, useDesigns, useRemoveDesign, useSwitchDesign } from '@/lib'
 import { ClearDesignsDialog, DeleteDesignDialog } from '@/components/dialogs'
 
 const clearDesigns = async () => {
@@ -34,14 +34,14 @@ export const LogoMenu = () => {
   const switchDesign = useSwitchDesign()
   const isEmpty = useAtomValue(isEmptyAtom)
   const design = useDesign()
-  const sceneRef = useAtomValue(sceneRefAtom)
+  const exportTarget = useAtomValue(exportTargetAtom)
 
   const saveAsGlb = () => {
-    if (!sceneRef?.current) {
+    if (!exportTarget) {
       return
     }
     const exporter = new GLTFExporter()
-    exporter.parse(sceneRef.current!, (gltfJson) => {
+    exporter.parse(exportTarget, (gltfJson) => {
       saveAs(new Blob([gltfJson as ArrayBuffer], { type: 'application/octet-stream' }), `${design?.name ?? 'Untitled'}.glb`)
     }, (error) => {
       console.error(error)
