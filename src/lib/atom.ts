@@ -1,6 +1,7 @@
 import { atom, createStore } from 'jotai'
 import type * as THREE from 'three'
 import { atomWithImmer } from 'jotai-immer'
+import { atomWithStorage } from 'jotai/utils'
 import type { PolyObject } from './types'
 
 export const designIdAtom = atom(-1)
@@ -8,7 +9,7 @@ export const sceneIdAtom = atom(-1)
 export const isEmptyAtom = atom(get => get(designIdAtom) === -1)
 
 export const isObjectTreeHoverAtom = atom(false)
-export const minimizedAtom = atom(false)
+export const minimizedAtom = atomWithStorage('minimized', false)
 
 export const isRenamingAtom = atom(false)
 export const isCreatingAtom = atom(false)

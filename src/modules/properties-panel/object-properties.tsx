@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { useRemoveObject, useUpdateObject } from '@/lib'
+import { useFocusedObject, useRemoveObject, useUpdateObject } from '@/lib'
 import { Checkbox } from '@/components/ui/checkbox'
 
 export type Props = {
@@ -28,7 +28,8 @@ const LABELS = {
   path: ['curveSegs', 'steps', 'depth', 'bevelEnabled', 'bThickness', 'bSize', 'bOffset', 'bSegments'],
 }
 
-export const ObjectProperties = ({ object }: Props) => {
+export const ObjectProperties = () => {
+  const object = useFocusedObject()
   const [dScale, setDScale] = useState(1)
   const updateObject = useUpdateObject()
   const removeObject = useRemoveObject()

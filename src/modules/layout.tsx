@@ -24,10 +24,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const minMainSize = MIN_MAIN_WIDTH / width * 100
   const designs = useDesigns()
   return (
-    <ResizablePanelGroup direction="horizontal">
+    <ResizablePanelGroup direction="horizontal" autoSaveId="persistence-layout">
       {!minimized && (
         <>
           <ResizablePanel
+            id="objects-panel"
+            order={1}
             minSize={minSideSize}
             defaultSize={minSideSize}
           >
@@ -36,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <ResizableHandle />
         </>
       )}
-      <ResizablePanel minSize={minMainSize}>
+      <ResizablePanel minSize={minMainSize} id="main-panel" order={2}>
         <main className="h-full">
           {designs
             ? (designs.length > 0 ? children : <EmptyState />)
@@ -50,6 +52,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             minSize={minSideSize}
             maxSize={maxSideSize}
             defaultSize={minSideSize}
+            id="properties-panel"
+            order={3}
           >
             <PropertiesPanel />
           </ResizablePanel>
