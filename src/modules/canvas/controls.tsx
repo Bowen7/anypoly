@@ -6,11 +6,15 @@ import type { N3 } from '@/lib/types'
 import { quatToDegN3, toFixedN3, v3ToN3 } from '@/lib/utils'
 
 type Props = {
+  center?: THREE.Vector3
   position: N3
   rotation: N3
   scale: N3
+  visible: boolean
 }
-export const Controls = ({ position, rotation, scale }: Props) => {
+const DEFAULT_CENTER = new THREE.Vector3()
+
+export const Controls = ({ center = DEFAULT_CENTER, position, rotation, scale, visible }: Props) => {
   const updateObject = useUpdateObject()
   const transformRef = useRef<{
     position: N3
@@ -50,7 +54,7 @@ export const Controls = ({ position, rotation, scale }: Props) => {
     transformRef.current = null
   }
   return (
-    <group userData={{ ignore: true }}>
+    <group userData={{ ignore: true }} visible={visible} position={center}>
       <PivotControls
         matrix={matrix}
         depthTest={false}

@@ -1,12 +1,13 @@
 import { useAtomValue } from 'jotai'
-import { useMemo, useRef } from 'react'
-import type * as THREE from 'three'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import * as THREE from 'three'
 import { BoundingBox } from './bounding-box'
 import { Mesh } from './mesh'
+import { Controls } from './controls'
 import { focusedIdAtom } from '@/lib/atom'
 import type { N3, PolyGroup, PolyObject } from '@/lib/types'
 import { degToRadianN3 } from '@/lib/utils'
-import { useLatestObject } from '@/lib'
+import { getBoxFromObject, useLatestObject } from '@/lib'
 
 type GroupProps = {
   isFocused: boolean
@@ -14,31 +15,54 @@ type GroupProps = {
 }
 export function Group({ isFocused, object }: GroupProps) {
   const group = useLatestObject(object, isFocused) as PolyGroup
-  const { position, rotation: [rx, ry, rz], scale, visible, children } = group
+  const { children } = object
+  const { position, rotation: [rx, ry, rz], scale, visible } = group
   const rotation = useMemo<N3>(() => degToRadianN3([rx, ry, rz]), [rx, ry, rz])
   const ref = useRef<THREE.Group>(null)
+  const [center, setCenter] = useState<THREE.Vector3 | undefined>(undefined)
 
-  const deps = useMemo(() => [position, scale, rotation], [position, scale, rotation])
+  const deps = useMemo(() => [position, scale, rotation, children], [position, scale, rotation, children])
+
+  useLayoutEffect(() => {
+    if (!ref.current || !isFocused) {
+      return
+    }
+    const box = getBoxFromObject(ref.current)
+    const center = box.getCenter(new THREE.Vector3())
+    setCenter(center.sub(new THREE.Vector3(...position)))
+  }, [isFocused, children, position])
+
   return (
-    <group
-      position={position}
-      rotation={rotation}
-      scale={scale}
-      visible={visible}
-      ref={ref}
-    >
-      {children.map(child => (
-        <Object key={child.id} object={child} />
-      ))}
+    <>
+      <group
+        position={position}
+        rotation={rotation}
+        scale={scale}
+        visible={visible}
+        ref={ref}
+      >
+        {children.map(child => (
+          <Object key={child.id} object={child} />
+        ))}
+        {isFocused && (
+          <BoundingBox
+            target={ref}
+            deps={deps}
+            type="focus"
+            visible={visible}
+          />
+        )}
+      </group>
       {isFocused && (
-        <BoundingBox
-          target={ref}
-          deps={deps}
-          type="focus"
+        <Controls
+          center={center}
+          position={position}
+          rotation={rotation}
+          scale={scale}
           visible={visible}
         />
       )}
-    </group>
+    </>
   )
 }
 

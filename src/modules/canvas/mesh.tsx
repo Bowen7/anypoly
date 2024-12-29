@@ -70,6 +70,7 @@ export const Mesh = memo((props: Props) => {
           position={position}
           rotation={rotation}
           scale={scale}
+          visible={visible}
         />
       )}
     </>

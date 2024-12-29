@@ -15,10 +15,10 @@ export const BoundingBox = memo(({ target, type, visible, deps }: BoundingBoxPro
   const [geometry, setGeometry] = useState<THREE.BoxGeometry | null>(null)
 
   useLayoutEffect(() => {
-    if (!target.current || !target.current.parent) {
+    if (!target.current) {
       return
     }
-    const box = getBoxFromObject(target.current.parent)
+    const box = getBoxFromObject(target.current)
     const dimensions = new THREE.Vector3().subVectors(box.max, box.min).add(new THREE.Vector3(0.1, 0.1, 0.1))
     const position = box.getCenter(new THREE.Vector3())
     setGeometry(new THREE.BoxGeometry(dimensions.x, dimensions.y, dimensions.z))

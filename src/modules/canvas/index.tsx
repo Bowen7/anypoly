@@ -1,12 +1,12 @@
 import type { AxesHelper, Scene } from 'three'
 import { Environment, OrbitControls } from '@react-three/drei'
 import { Canvas as ThreeCanvas } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { useSetAtom } from 'jotai'
 import { ToolBelt } from './tool-belt'
 import { Object } from './object'
-import { exportTargetAtom, useObjects } from '@/lib'
+import { exportTargetAtom, focusedObjectAtom, useObjects } from '@/lib'
 import { PortalTarget } from '@/components/portal'
 
 type Size = {
@@ -20,6 +20,7 @@ export const Canvas = () => {
   const sceneRef = useRef<Scene>(null)
   const axesRef = useRef<AxesHelper>(null)
   const setExportTarget = useSetAtom(exportTargetAtom)
+  const setFocusedObject = useSetAtom(focusedObjectAtom)
 
   const [{ width, height }, setSize] = useState<Size>({
     width: 0,
@@ -41,9 +42,13 @@ export const Canvas = () => {
     axesRef.current?.setColors('#facc15', '#4ade80', '#60a5fa')
   }, [])
 
+  const onPointerMissed = useCallback(() => {
+    setFocusedObject(null)
+  }, [setFocusedObject])
+
   return (
     <div ref={ref} className="h-full relative" onMouseDown={e => e.preventDefault()}>
-      <ThreeCanvas style={{ width, height }} camera={{ position: [0, 0, 10] }}>
+      <ThreeCanvas style={{ width, height }} camera={{ position: [0, 0, 10] }} onPointerMissed={onPointerMissed}>
         <color attach="background" args={['#f0f0f0']} />
         <directionalLight
           position={[
