@@ -50,13 +50,15 @@ export const Controls = ({ position, rotation, scale }: Props) => {
     transformRef.current = null
   }
   return (
-    <PivotControls
-      matrix={matrix}
-      depthTest={false}
-      scale={1.5}
-      annotations
-      onDrag={onDrag}
-      onDragEnd={onDragEnd}
-    />
+    <group userData={{ ignore: true }}>
+      <PivotControls
+        matrix={matrix}
+        depthTest={false}
+        scale={1.5}
+        annotations
+        onDrag={onDrag}
+        onDragEnd={onDragEnd}
+      />
+    </group>
   )
 }

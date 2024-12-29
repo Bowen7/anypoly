@@ -48,13 +48,14 @@ export const Mesh = memo((props: Props) => {
         onPointerOut={() => setIsHovered(false)}
       >
         <meshStandardMaterial color={color} side={THREE.DoubleSide} />
-        {/* {focusBoxEnabled && (
+        {isFocused && (
           <BoundingBox
             target={ref}
             deps={deps}
             type="focus"
+            visible={visible}
           />
-        )} */}
+        )}
         {!isFocused && isHovered && (
           <BoundingBox
             target={ref}
