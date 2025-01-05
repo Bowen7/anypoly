@@ -8,33 +8,36 @@ export type BaseObject = {
   visible: boolean
 }
 
-export type PolyBoxMesh = BaseObject & {
+export type CSGOperation = '' | 'add' | 'subtract' | 'intersect' | 'reverseSubtract' | 'diff'
+
+export type BaseShapeObject = BaseObject & {
   color: string
+  csgEnabled: boolean
+  csgOperation: CSGOperation
+  children: PolyShapeMesh[]
+}
+
+export type PolyBoxMesh = BaseShapeObject & {
   type: 'box'
   args: [number, number, number, number, number]
 }
-export type PolySphereMesh = BaseObject & {
-  color: string
+export type PolySphereMesh = BaseShapeObject & {
   type: 'sphere'
   args: [number, number, number, number, number, number, number]
 }
-export type PolyCircleMesh = BaseObject & {
-  color: string
+export type PolyCircleMesh = BaseShapeObject & {
   type: 'circle'
   args: [number, number, number, number]
 }
-export type PolyCylinderMesh = BaseObject & {
-  color: string
+export type PolyCylinderMesh = BaseShapeObject & {
   type: 'cylinder'
   args: [number, number, number, number, number, boolean, number, number]
 }
-export type PolyConeMesh = BaseObject & {
-  color: string
+export type PolyConeMesh = BaseShapeObject & {
   type: 'cone'
   args: [number, number, number, number, boolean, number, number]
 }
-export type PolyPlaneMesh = BaseObject & {
-  color: string
+export type PolyPlaneMesh = BaseShapeObject & {
   type: 'plane'
   args: [number, number, number, number]
 }
@@ -46,10 +49,9 @@ export type PolyGroup = BaseObject & {
   children: PolyObject[]
 }
 
-export type PolyPathMesh = BaseObject & {
+export type PolyPathMesh = BaseShapeObject & {
   type: 'path'
   d: string
-  color: string
   extrude: boolean
   args: [number, number, number, boolean, number, number, number, number]
 }
@@ -84,4 +86,13 @@ export type SceneModel = {
   design: number
   objects: PolyObject[]
   updated: Date
+}
+
+export const isShapeMesh = (object: PolyObject): object is PolyShapeMesh => {
+  return object.type === 'box'
+    || object.type === 'sphere'
+    || object.type === 'circle'
+    || object.type === 'cylinder'
+    || object.type === 'cone'
+    || object.type === 'plane'
 }

@@ -7,21 +7,22 @@ import { focusedIdAtom, focusedObjectAtom, objectsAtom, store } from './atom'
 export const useObjects = () => useAtomValue(objectsAtom)
 export const useFocusedObject = () => useAtomValue(focusedObjectAtom)
 
-export const visitObjects = (
+export const visitObjects = <T>(
   objects: PolyObject[],
   id: string,
-  callback: (collection: PolyObject[], index: number) => void,
-) => {
+  callback: (collection: PolyObject[], index: number, parent: PolyObject | null) => T | null,
+  parent: PolyObject | null = null,
+): T | null => {
   for (let i = 0; i < objects.length; i++) {
     const object = objects[i]
     if (object.id === id) {
-      callback(objects, i)
-      return
+      return callback(objects, i, parent)
     }
-    if (object.type === 'group' && object.children) {
-      visitObjects(object.children, id, callback)
+    if (object.children && object.children.length > 0) {
+      return visitObjects<T>(object.children, id, callback, object)
     }
   }
+  return null
 }
 
 export const useRemoveObject = () => {
@@ -101,6 +102,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 1, 1, 1, 0],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'sphere':
       return {
@@ -108,6 +112,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 16, 16, 0, 2, 0, 1],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'circle':
       return {
@@ -115,6 +122,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 16, 0, 2],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'cylinder':
       return {
@@ -122,6 +132,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 1, 1, 8, 1, false, 0, 2],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'cone':
       return {
@@ -129,6 +142,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 1, 8, 1, false, 0, 2],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'plane':
       return {
@@ -136,6 +152,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         type,
         color,
         args: [1, 1, 1, 1],
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     case 'group':
       return {
@@ -151,6 +170,9 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         extrude: false,
         args: [12, 1, 1, true, 0.2, 0.1, 0, 3],
         color,
+        csgEnabled: false,
+        children: [],
+        csgOperation: '',
       }
     default:
       throw new Error(`Unknown object type: ${type}`)
@@ -189,10 +211,8 @@ export const useMoveObject = () => {
         draft.splice(index, 0, object)
       } else {
         visitObjects(draft, parentId, (collection, i) => {
-          const group = collection[i]
-          if (group.type === 'group') {
-            group.children.splice(index, 0, object!)
-          }
+          const parentObject = collection[i]
+          parentObject.children.splice(index, 0, object!)
         })
       }
       visitObjects(draft, TEMP_GROUP.id, (collection, index) => {

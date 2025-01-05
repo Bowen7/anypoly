@@ -14,12 +14,12 @@ import {
   Square as SquareIcon,
 } from '@phosphor-icons/react'
 import clsx from 'clsx'
-import { focusedIdAtom, focusedObjectAtom, isObjectTreeHoverAtom, useSetObjectVisible } from '@/lib'
+import { focusedIdAtom, focusedObjectAtom, isObjectTreeHoverAtom, isShapeMesh, useSetObjectVisible } from '@/lib'
 import type { PolyObject } from '@/lib/types'
 
 export const ObjectNode = memo((props: NodeRendererProps<PolyObject>) => {
   const { node, style, dragHandle } = props
-  const { data, isLeaf, isOpen } = node
+  const { data, isOpen } = node
   const { visible } = data
   const isHover = useAtomValue(isObjectTreeHoverAtom)
   const focusedId = useAtomValue(focusedIdAtom)
@@ -58,6 +58,10 @@ export const ObjectNode = memo((props: NodeRendererProps<PolyObject>) => {
         return null
     }
   }, [data.type])
+
+  const isShape = isShapeMesh(data)
+  const isGroup = data.type === 'group'
+
   return (
     <div
       style={style}
@@ -67,7 +71,7 @@ export const ObjectNode = memo((props: NodeRendererProps<PolyObject>) => {
     >
       <div className={clsx('flex items-center flex-1 py-0.5 rounded-md group justify-between pr-2', { 'bg-secondary': isSelected, 'hover:bg-secondary': !isSelected })}>
         <div className="flex items-center">
-          {isLeaf ? <span className="w-4 h-4" /> : <CaretRightIcon className={clsx({ 'rotate-90': isOpen, 'invisible': !isHover })} onClick={onClick} />}
+          {(isGroup || (isShape && data.children.length > 0)) ? <CaretRightIcon className={clsx({ 'rotate-90': isOpen, 'invisible': !isHover })} onClick={onClick} /> : <span className="w-4 h-4" /> }
           {icon}
           <span className={clsx('text-sm pl-0.5')}>{data.name}</span>
         </div>

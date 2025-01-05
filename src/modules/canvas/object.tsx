@@ -68,13 +68,14 @@ export function Group({ isFocused, object }: GroupProps) {
 
 type Props = {
   object: PolyObject
+  parentCSGEnabled?: boolean
 }
-export function Object({ object }: Props) {
+export function Object({ object, parentCSGEnabled = false }: Props) {
   const { id, type } = object
   const focusedId = useAtomValue(focusedIdAtom)
   const isFocused = id === focusedId
 
   return type === 'group'
     ? <Group isFocused={isFocused} object={object} />
-    : <Mesh object={object} isFocused={isFocused} />
+    : <Mesh object={object} isFocused={isFocused} parentCSGEnabled={parentCSGEnabled} />
 }

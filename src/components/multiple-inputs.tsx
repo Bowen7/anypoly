@@ -21,11 +21,12 @@ export const MultipleInputs = ({ values, labels, n = values.length, onChange }: 
                 <Label className="ml-0.5 text-sm scale-90 block origin-left text-muted-foreground">{label}</Label>
                 <Input
                   type="number"
+                  step={0.1}
                   value={value}
                   onChange={e => onChange(produce(values, (draft) => {
                     draft[index] = Number(e.target.value)
                   }))}
-                  className="h-7"
+                  className="h-7 text-xs md:text-xs px-2"
                   autoSelect
                 />
               </div>

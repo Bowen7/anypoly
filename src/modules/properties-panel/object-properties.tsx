@@ -2,14 +2,16 @@ import { Eye as EyeIcon, EyeSlash as EyeSlashIcon, Trash as TrashIcon } from '@p
 import { parsePath, serialize } from 'path-data-parser'
 import { useMemo, useState } from 'react'
 import { PropertiesGroup, PropertiesPanel, PropertyItem } from './property'
-import type { PolyObject, PolyPathMesh } from '@/lib/types'
+import type { CSGOperation, PolyObject, PolyPathMesh } from '@/lib/types'
 import { MultipleInputs } from '@/components/multiple-inputs'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Textarea } from '@/components/ui/textarea'
-import { useFocusedObject, useRemoveObject, useUpdateObject } from '@/lib'
+import { isShapeMesh, useFocusedObject, useObjects, useRemoveObject, useUpdateObject, visitObjects } from '@/lib'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Switch } from '@/components/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export type Props = {
   object: PolyObject
@@ -29,10 +31,24 @@ const LABELS = {
 }
 
 export const ObjectProperties = () => {
+  const objects = useObjects()
   const object = useFocusedObject()
   const [dScale, setDScale] = useState(1)
   const updateObject = useUpdateObject()
   const removeObject = useRemoveObject()
+
+  const parent = useMemo(() => {
+    return visitObjects(objects, object?.id ?? '', (_, __, p) => {
+      return p
+    })
+  }, [objects, object])
+
+  const parentCSGEnabled = useMemo(() => {
+    if (parent && isShapeMesh(parent)) {
+      return parent.csgEnabled
+    }
+    return false
+  }, [parent])
 
   const onScaleClick = () => {
     const segments = parsePath((object as PolyPathMesh).d).map(({ key, data }) => {
@@ -53,16 +69,22 @@ export const ObjectProperties = () => {
   }
 
   const argsN = useMemo(() => {
-    if (object.type === 'group') {
+    if (object?.type === 'group') {
       return 0
     }
-    if (object.type === 'path') {
+    if (object?.type === 'path') {
       if (!object.extrude) {
         return 1
       }
     }
-    return object.args.length
+    return object?.args.length ?? 0
   }, [object])
+
+  if (!object) {
+    return null
+  }
+
+  const isShape = isShapeMesh(object)
 
   return (
     <PropertiesPanel>
@@ -70,7 +92,7 @@ export const ObjectProperties = () => {
         <PropertyItem label="Object name">
           <Input
             placeholder="Input object name"
-            value={object.name}
+            value={object?.name ?? ''}
             onChange={(e) => {
               updateObject({ name: e.target.value })
             }}
@@ -93,6 +115,38 @@ export const ObjectProperties = () => {
             <TrashIcon />
           </Button>
         </PropertyItem>
+        {isShape && (
+          <>
+            {parentCSGEnabled
+              ? (
+                  <PropertyItem label="CSG Operation">
+                    <Select
+                      value={object.csgOperation}
+                      onValueChange={value => updateObject({ csgOperation: value as CSGOperation })}
+                    >
+                      <SelectTrigger className="w-[200px] h-8">
+                        <SelectValue placeholder="Select CSG Operation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="add">Add</SelectItem>
+                        <SelectItem value="subtract">Subtract</SelectItem>
+                        <SelectItem value="reverseSubtract">Reverse Subtract</SelectItem>
+                        <SelectItem value="intersect">Intersect</SelectItem>
+                        <SelectItem value="diff">Difference</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </PropertyItem>
+                )
+              : (
+                  <PropertyItem label="Enabled CSG">
+                    <Switch
+                      checked={object.csgEnabled}
+                      onCheckedChange={checked => updateObject({ csgEnabled: checked as boolean })}
+                    />
+                  </PropertyItem>
+                )}
+          </>
+        )}
       </PropertiesGroup>
       <Separator />
       <PropertiesGroup>

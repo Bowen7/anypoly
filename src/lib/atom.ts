@@ -21,4 +21,6 @@ export const focusedIdAtom = atom(get => get(focusedObjectAtom)?.id ?? '')
 export const exportTargetAtom = atom<THREE.Scene | null>(null)
 export const portalTargetAtom = atom<THREE.Object3D | null>(null)
 
+export const isDraggingAtom = atom(false)
+
 export const store = createStore()
