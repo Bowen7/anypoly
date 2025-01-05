@@ -19,7 +19,7 @@ const LABELS = {
   position: ['x', 'y', 'z'],
   rotation: ['x', 'y', 'z'],
   scale: ['x', 'y', 'z'],
-  box: ['width', 'height', 'depth', 'widthSegs', 'heightSegs', 'depthSegs'],
+  box: ['width', 'height', 'depth', 'segments', 'corner'],
   sphere: ['radius', 'widthSegs', 'heightSegs', 'phiStart', 'phiLen(*PI)', 'thetaStart', 'thetaLen(*PI)'],
   circle: ['radius', 'segs', 'thetaStart', 'thetaLen(*PI)'],
   cylinder: ['radiusTop', 'radiusBottom', 'height', 'radialSegs', 'heightSegs', 'openEnded', 'thetaStart', 'thetaLen(*PI)'],

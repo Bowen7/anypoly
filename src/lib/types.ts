@@ -11,7 +11,7 @@ export type BaseObject = {
 export type PolyBoxMesh = BaseObject & {
   color: string
   type: 'box'
-  args: [number, number, number, number, number, number]
+  args: [number, number, number, number, number]
 }
 export type PolySphereMesh = BaseObject & {
   color: string
@@ -56,6 +56,22 @@ export type PolyPathMesh = BaseObject & {
 
 export type PolyObject = PolyShapeMesh | PolyGroup | PolyPathMesh
 export type PolyMesh = PolyShapeMesh | PolyPathMesh
+
+export type PolyNumberArg = {
+  type: 'number'
+  value: number
+  min?: number
+  max?: number
+}
+export type PolyBooleanArg = {
+  type: 'boolean'
+  value: boolean
+}
+export type PolyColorArg = {
+  type: 'color'
+  value: string
+}
+export type PolyArg = PolyNumberArg | PolyBooleanArg | PolyColorArg
 
 export type DesignModel = {
   id: number

@@ -100,7 +100,7 @@ export const createObject = (type: PolyObject['type']): PolyObject => {
         ...object,
         type,
         color,
-        args: [1, 1, 1, 1, 1, 1],
+        args: [1, 1, 1, 1, 0],
       }
     case 'sphere':
       return {

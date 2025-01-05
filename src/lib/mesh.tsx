@@ -5,6 +5,33 @@ import type { PolyMesh } from './types'
 
 const loader = new SVGLoader()
 
+const eps = 0.00001
+
+function createRoundedBoxShape(width: number, height: number, radius0: number) {
+  const shape = new THREE.Shape()
+  const radius = radius0 - eps
+  shape.absarc(eps, eps, eps, -Math.PI / 2, -Math.PI, true)
+  shape.absarc(eps, height - radius * 2, eps, Math.PI, Math.PI / 2, true)
+  shape.absarc(width - radius * 2, height - radius * 2, eps, Math.PI / 2, 0, true)
+  shape.absarc(width - radius * 2, eps, eps, 0, -Math.PI / 2, true)
+  return shape
+}
+
+const createRoundedBoxGeometry = (width: number, height: number, depth: number, segments: number, corner: number) => {
+  const shape = createRoundedBoxShape(width, height, corner)
+  const geometry = new THREE.ExtrudeGeometry(shape, {
+    depth: depth - corner * 2,
+    bevelEnabled: true,
+    bevelSegments: segments * 2,
+    steps: segments,
+    bevelSize: corner - eps,
+    bevelThickness: corner,
+    curveSegments: segments,
+  })
+  geometry.center()
+  return geometry
+}
+
 export const useMeshGeometry = (mesh: PolyMesh) => {
   const { type, args } = mesh
   const d = type === 'path' ? mesh.d : ''
@@ -12,7 +39,7 @@ export const useMeshGeometry = (mesh: PolyMesh) => {
   return useMemo(() => {
     switch (type) {
       case 'box':
-        return new THREE.BoxGeometry(...args)
+        return args[0] > 0 ? createRoundedBoxGeometry(...args) : new THREE.BoxGeometry(args[0], args[1], args[2], args[3], args[3], args[3])
       case 'sphere':
         return new THREE.SphereGeometry(args[0], args[1], args[2], args[3], args[4] * Math.PI, args[5], args[6] * Math.PI)
       case 'circle':
