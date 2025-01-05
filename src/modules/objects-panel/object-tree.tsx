@@ -5,6 +5,12 @@ import { useCallback, useEffect, useRef } from 'react'
 import { ObjectNode } from './object-node'
 import type { PolyObject } from '@/lib/types'
 import { focusedObjectAtom, isObjectTreeHoverAtom, useMoveObject, useRemoveObject } from '@/lib'
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu'
 
 type Props = {
   data: PolyObject[]

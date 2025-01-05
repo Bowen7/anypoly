@@ -68,24 +68,39 @@ export const Mesh = memo((props: Props) => {
   const deps = useMemo(() =>
     [position, scale, rotation, args, extrude], [position, scale, rotation, args, extrude])
 
-  const meshProps = parentCSGEnabled
-    ? {
-        position,
-        rotation,
-        scale,
-        geometry,
-      }
-    : {
+  const meshProps = useMemo(() => {
+    if (csgEnabled) {
+      return {
         ref,
         position,
         rotation,
         scale,
         visible,
-        geometry,
         onClick,
         onPointerOver: () => setIsHovered(true),
         onPointerOut: () => setIsHovered(false),
       }
+    }
+    if (parentCSGEnabled) {
+      return {
+        position,
+        rotation,
+        scale,
+        geometry,
+      }
+    }
+    return {
+      ref,
+      position,
+      rotation,
+      scale,
+      visible,
+      geometry,
+      onClick,
+      onPointerOver: () => setIsHovered(true),
+      onPointerOut: () => setIsHovered(false),
+    }
+  }, [csgEnabled, parentCSGEnabled, position, rotation, scale, visible, geometry, onClick])
 
   return (
     <>
