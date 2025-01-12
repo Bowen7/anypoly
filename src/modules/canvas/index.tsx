@@ -6,6 +6,7 @@ import { useDebounceCallback, useResizeObserver } from 'usehooks-ts'
 import { useSetAtom } from 'jotai'
 import { ToolBelt } from './tool-belt'
 import { Object } from './object'
+import { Playground } from './playground'
 import { exportTargetAtom, focusedObjectAtom, useObjects } from '@/lib'
 import { PortalTarget } from '@/components/portal'
 
@@ -71,6 +72,7 @@ export const Canvas = () => {
             <Object key={object.id} object={object} />
           ))}
         </scene>
+        {/* <Playground /> */}
         <PortalTarget />
         <Environment preset="sunset" environmentIntensity={0.5} />
         <axesHelper ref={axesRef} args={[10]} />
