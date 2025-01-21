@@ -1,4 +1,5 @@
 export type N3 = [number, number, number]
+export type N2 = [number, number]
 export type BaseObject = {
   id: string
   name: string
