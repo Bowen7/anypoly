@@ -55,5 +55,6 @@ export class ExtrudePathGeometry extends PolyGeometry {
     })
 
     this.build()
+    this.center()
   }
 }
