@@ -50,7 +50,7 @@ export const Canvas = () => {
   return (
     <div ref={ref} className="h-full relative" onMouseDown={e => e.preventDefault()}>
       <ThreeCanvas style={{ width, height }} camera={{ position: [0, 0, 10] }} onPointerMissed={onPointerMissed}>
-        <color attach="background" args={['#f0f0f0']} />
+        <color attach="background" args={['#fff']} />
         <directionalLight
           position={[
             10,
